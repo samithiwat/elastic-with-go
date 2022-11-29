@@ -89,3 +89,7 @@ fabric.properties
 # vendor/
 
 .idea
+
+rabbitmq
+certs
+elasticsearch.yml
