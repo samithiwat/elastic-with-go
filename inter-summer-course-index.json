@@ -1,0 +1,32 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1
+    }
+  },
+  "mappings": {
+    "properties": {
+      "RawData": { "type": "object" },
+      "AbbrName": {
+        "type": "text"
+      },
+      "CourseNo": {
+        "type": "text"
+      },
+      "CourseNameTh": {
+        "type": "text",
+        "analyzer": "thai"
+      },
+      "CourseNameEn": {
+        "type": "text"
+      },
+      "CourseDescTh": {
+        "type": "text",
+        "analyzer": "thai"
+      },
+      "CourseDescEn": {
+        "type": "text"
+      }
+    }
+  }
+}
