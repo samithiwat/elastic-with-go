@@ -1,22 +1,28 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
+	"github.com/elastic/elastic-transport-go/v8/elastictransport"
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/rs/zerolog/log"
 	"github.com/samithiwat/elastic-with-go/src/domain/entity/course"
 	"os"
 )
 
-// Assume we have index name test
+// TODO: Insert using bulk index
+// Assume we already had an index
 
 func main() {
 	client, err := elasticsearch.NewClient(elasticsearch.Config{
 		Addresses: []string{"http://localhost:9200"},
 		Username:  "elastic",
 		Password:  "admin",
+		Logger: &elastictransport.ColorLogger{
+			Output:             os.Stdout,
+			EnableRequestBody:  true,
+			EnableResponseBody: true,
+		},
 	})
 
 	if err != nil {
@@ -59,15 +65,11 @@ func main() {
 			RawData:      c,
 		}
 
-		courseDocByte, _ := json.Marshal(courseDoc)
-
-		res, err := client.Create("course_2", c.ID.OID, bytes.NewReader(courseDocByte))
-		if err != nil {
+		if _, err := client.Create("course_3", c.ID.OID, esutil.NewJSONReader(courseDoc)); err != nil {
 			log.Fatal().
 				Err(err).
 				Msg("Error while create data to elasticsearch database")
 		}
-		fmt.Println(res)
 	}
 
 }

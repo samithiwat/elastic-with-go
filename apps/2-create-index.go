@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/elastic/elastic-transport-go/v8/elastictransport"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/rs/zerolog/log"
 	"os"
@@ -13,6 +14,11 @@ func main() {
 		Addresses: []string{"http://localhost:9200"},
 		Username:  "elastic",
 		Password:  "admin",
+		Logger: &elastictransport.ColorLogger{
+			Output:             os.Stdout,
+			EnableRequestBody:  true,
+			EnableResponseBody: true,
+		},
 	})
 
 	if err != nil {
@@ -36,8 +42,8 @@ func main() {
 			Msg("Error while read the course index file")
 	}
 
-	res, err := client.Index("course_2", bytes.NewReader(indexJsonRaw))
-	
+	res, err := client.Index("course_3", bytes.NewReader(indexJsonRaw))
+
 	if err != nil {
 		log.Fatal().
 			Err(err).
