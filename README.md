@@ -1,5 +1,4 @@
-OpenSearch Experiment
-====================
+# Elasticsearch with golang 
 
 # Installation Guidelines
 
