@@ -3,7 +3,8 @@ module github.com/samithiwat/elastic-with-go
 go 1.19
 
 require (
-	github.com/elastic/go-elasticsearch/v8 v8.0.0
+	github.com/elastic/elastic-transport-go/v8 v8.1.0
+	github.com/elastic/go-elasticsearch/v8 v8.5.0
 	github.com/gofiber/fiber/v2 v2.37.1
 	github.com/google/uuid v1.3.0
 	github.com/opensearch-project/opensearch-go/v2 v2.1.0
@@ -17,7 +18,6 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/elastic/elastic-transport-go/v8 v8.0.0-alpha // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
