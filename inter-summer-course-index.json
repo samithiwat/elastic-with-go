@@ -6,25 +6,25 @@
   },
   "mappings": {
     "properties": {
-      "RawData": { "type": "object" },
+      "rawData": { "type": "object" },
       "AbbrName": {
         "type": "text"
       },
-      "CourseNo": {
+      "courseNo": {
         "type": "text"
       },
-      "CourseNameTh": {
+      "courseNameTh": {
         "type": "text",
         "analyzer": "thai"
       },
-      "CourseNameEn": {
+      "courseNameEn": {
         "type": "text"
       },
-      "CourseDescTh": {
+      "courseDescTh": {
         "type": "text",
         "analyzer": "thai"
       },
-      "CourseDescEn": {
+      "courseDescEn": {
         "type": "text"
       }
     }

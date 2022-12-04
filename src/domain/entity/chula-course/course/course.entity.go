@@ -9,25 +9,25 @@ import (
 
 type Course struct {
 	entity.BaseMongo
-	StudyProgram    common.StudyProgram `json:"studyProgram"`
-	Semester        common.Semester     `json:"semester"`
-	AcademicYear    string              `json:"academicYear"`
-	CourseNo        string              `json:"courseNo"`
-	CourseNameTh    string              `json:"courseNameTh"`
-	CourseNameEn    string              `json:"courseNameEn"`
-	CourseDescTh    string              `json:"courseDescTh"`
-	CourseDescEn    string              `json:"courseDescEn"`
-	AbbrName        string              `json:"abbrName"`
-	Faculty         string              `json:"faculty"`
-	Department      string              `json:"department"`
-	Credit          uint                `json:"credit"`
-	CreditHour      uint                `json:"creditHour"`
-	CourseCondition string              `json:"courseCondition"`
-	GenEdType       common.GenEdType    `json:"genEdType"`
-	Rating          string              `json:"rating"`
-	Midterm         common.ExamPeriod   `json:"midterm"`
-	Final           common.ExamPeriod   `json:"final"`
-	Sections        []*section.Section  `json:"sections"`
+	StudyProgram    common.StudyProgram `json:"studyProgram" mapstructure:"studyProgram"`
+	Semester        common.Semester     `json:"semester" mapstructure:"semester"`
+	AcademicYear    string              `json:"academicYear" mapstructure:"academicYear"`
+	CourseNo        string              `json:"courseNo" mapstructure:"courseNo"`
+	CourseNameTh    string              `json:"courseNameTh" mapstructure:"courseNameTh"`
+	CourseNameEn    string              `json:"courseNameEn" mapstructure:"courseNameEn"`
+	CourseDescTh    string              `json:"courseDescTh" mapstructure:"courseDescTh"`
+	CourseDescEn    string              `json:"courseDescEn" mapstructure:"courseDescEn"`
+	AbbrName        string              `json:"abbrName" mapstructure:"abbrName"`
+	Faculty         string              `json:"faculty" mapstructure:"faculty"`
+	Department      string              `json:"department" mapstructure:"department"`
+	Credit          uint                `json:"credit" mapstructure:"credit"`
+	CreditHour      uint                `json:"creditHour" mapstructure:"creditHour"`
+	CourseCondition string              `json:"courseCondition" mapstructure:"courseCondition"`
+	GenEdType       common.GenEdType    `json:"genEdType" mapstructure:"genEdType"`
+	Rating          string              `json:"rating" mapstructure:"rating"`
+	Midterm         common.ExamPeriod   `json:"midterm" mapstructure:"midterm"`
+	Final           common.ExamPeriod   `json:"final" mapstructure:"final"`
+	Sections        []*section.Section  `json:"sections" mapstructure:"sections"`
 }
 
 func (e *Course) ToProto() *pb.Course {
