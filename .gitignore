@@ -90,6 +90,8 @@ fabric.properties
 
 .idea
 
+# config file
 rabbitmq
-certs
-elasticsearch.yml
+elasticsearch.yaml
+app.yaml
+redis.yaml
