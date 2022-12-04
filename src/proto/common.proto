@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "src/pb;pb";
+
+message PaginationQuery {
+  int32 limit = 1;
+  int32 page = 2;
+}
+
+message PaginationMetadata{
+  int64 total_item = 1;
+  int64 item_count = 2;
+  int64 items_per_page = 3;
+  int64 total_page = 4;
+  int64 current_page = 5;
+}

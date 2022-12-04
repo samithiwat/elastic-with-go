@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package course_search;
+
+option go_package = "src/pb;pb";
+
+service SearchService {
+  rpc Search(SearchRequest) returns (SearchResponse) {}
+}
+
+message Course {
+  string StudyProgram = 1;
+  string Semester = 2;
+  string AcademicYear = 3;
+  string CourseNo = 4;
+  string CourseNameTh = 5;
+  string CourseNameEn = 6;
+  string CourseDescTh = 7;
+  string CourseDescEn = 8;
+  string AbbrName = 9;
+  string Faculty = 10;
+  string Department = 11;
+  uint32 Credit = 12;
+  uint32 CreditHour = 13;
+  string CourseCondition = 14;
+  string GenEdType = 15;
+  string Rating = 16;
+  ExamPeriod Midterm  = 17;
+  ExamPeriod Final = 18;
+  repeated Section Sections = 19;
+}
+
+message Section{
+  string SectionNo = 1;
+  bool Closed = 2;
+  Capacity  Capacity = 3;
+  string Note = 4;
+  repeated Class Classes  = 5;
+  string GenEdType = 6;
+}
+
+message Class{
+  string Type  = 1;
+  string DayOfWeek = 2;
+  Period Period = 3;
+  string Building = 4;
+  string Room = 5;
+  repeated string Teachers = 6;
+}
+
+message ExamPeriod{
+  string Date = 1;
+  Period Period = 2;
+}
+
+message Capacity{
+  uint32 Current = 1;
+  uint32 Max = 2;
+}
+
+message Period{
+  string Start = 1;
+  string End = 2;
+}
+
+// Search
+
+message SearchRequest{
+  string QueryString = 1;
+}
+
+message SearchResponse{
+  repeated Course Course = 1;
+}
