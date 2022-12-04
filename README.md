@@ -1,74 +1,43 @@
-# Elasticsearch with golang 
+# Elastic with go
 
-# Installation Guidelines
+## Purpose
+This project is the POC for CU Get Reg and CU Newbie search feature
 
-- Run `docker-compose.yaml` in local by run command `docker-compose up -d`
+## Stacks
+- golang
+- gRPC
+- elasticsearch
+- redis
+- rabbitmq (later)
 
-# Getting Start
-Elasticsearch has total 4 important modules
+## Getting Start
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-1. Cluster
-2. Node
-3. Index
-4. Shard
+### Prerequisites
+- golang 1.19 or [later](https://go.dev)
+- docker
+- makefile
 
-## Cluster
-**Cluster** is the group of nodes
+### Installing
+1. Clone the project from [Elastic with go](https://github.com/samithiwat/elastic-with-go)
+2. Import project
+3. Copy `appp.example.yaml` in `config` and paste it in the same location then remove `.example` from its name.
+3. Copy `elasticsearch.example.yaml` in `config` and paste it in the same location then remove `.example` from its name.
+3. Copy `redis.example.yaml` in `config` and paste it in the same location then remove `.example` from its name.
+4. Download dependencies by `go mod download`
 
-## Node
-**Node** is the VM that installed the elasticsearch service
+### Testing
+1. Run `go test  -v -coverpkg ./... -coverprofile coverage.out -covermode count ./...` or `make test`
 
-## Index
-**Index** is the configuration how we keep the data
+### Running
+1. Run `docker-compose up -d` or `make compose-up`
+2. Run `go run ./src/.` or `make server`
 
-## Shard
-**Shard** is the module that store the data in the node
+### Compile proto file
+1. Run `make proto`
 
-# Create Index
+## Features
 
-To create index we need to define the index structure for elasticsearch in format like this
-
-```json
-{
-  "settings": {
-    "index": {
-      "number_of_shards": 1,
-      "number_of_replicas": 1
-    }
-  },
-  "mappings": {
-    "properties": {
-      "field1": {
-        "type": "text|keyword|integer|double...",
-        "analyzer": "english|thai"
-      }
-    }
-  }
-}
-```
-
-### Setting
-
-- **number_of_shards** is the number of the primary shard that elasticsearch will generate to store the data
-  - Cannot be edited after generated
-- **number_of_replicas** is the number of the replicas shard that elasticsearch will generate to be the replicas of the data in other nodes
-  - The number of replicas shard will be related to the primary shard
-  - example: Primary Shard = 3 and number_of_replicas = 2 -> we will get total 6 Replicas Shard
-  - Can be edited after generated
-
-### Mapping
-
-- **properties** is the structure of the data like schema in the RDBMS
-  - we can also choose the `text analyzer` for the data
-
-## Search
-
-```http request
-GET http://ELASTICSEARCH_HOST/INDEX_NAME/_search?q=ATTRIBUTE_NAME:YOUR_QUERY
-```
-
-### Example
-
-```http request
-GET http://localhost:9200/course/_search?q=courseNameEn:INDEPENDENT
-```
+- [ ] Create Index
+- [ ] Insert Data
+- [x] Search
