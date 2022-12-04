@@ -8,27 +8,6 @@ import (
 	"time"
 )
 
-type StudyProgram string
-type Semester string
-type GenEdType string
-type ClassType string
-type DauOfWeek string
-
-type ExamPeriod struct {
-	Date   string `json:"date"`
-	Period Period `json:"period"`
-}
-
-type Capacity struct {
-	Current uint `json:"current"`
-	Max     uint `json:"max"`
-}
-
-type Period struct {
-	Start string `json:"start"`
-	End   string `json:"end"`
-}
-
 type BaseMongo struct {
 	ID ObjectID `json:"_id"`
 }
