@@ -1,14 +1,14 @@
 package class
 
 import (
-	"github.com/samithiwat/elastic-with-go/src/domain/entity"
+	common "github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/common"
 	"github.com/samithiwat/elastic-with-go/src/pb"
 )
 
 type Class struct {
-	Type      entity.ClassType `json:"type"`
+	Type      common.ClassType `json:"type"`
 	DayOfWeek string           `json:"dayOfWeek"`
-	Period    entity.Period    `json:"period"`
+	Period    common.Period    `json:"period"`
 	Building  string           `json:"building"`
 	Room      string           `json:"room"`
 	Teachers  []string         `json:"teachers"`
@@ -16,11 +16,11 @@ type Class struct {
 
 func (e *Class) ToProto() *pb.Class {
 	return &pb.Class{
-		Type:      e.Type,
+		Type:      string(e.Type),
 		DayOfWeek: e.DayOfWeek,
-		Period:    e.Period,
-		Building:  "",
-		Room:      "",
-		Teachers:  nil,
+		Period:    e.Period.ToProto(),
+		Building:  e.Building,
+		Room:      e.Room,
+		Teachers:  e.Teachers,
 	}
 }
