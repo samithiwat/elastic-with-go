@@ -3,6 +3,12 @@
 ## Purpose
 This project is the POC for CU Get Reg and CU Newbie search feature
 
+## Features
+
+- [ ] Create Index
+- [ ] Insert Data
+- [x] Search
+
 ## Stacks
 - golang
 - gRPC
@@ -35,9 +41,3 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Compile proto file
 1. Run `make proto`
-
-## Features
-
-- [ ] Create Index
-- [ ] Insert Data
-- [x] Search
