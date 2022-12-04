@@ -3,6 +3,7 @@ package course
 import (
 	"github.com/samithiwat/elastic-with-go/src/domain/entity"
 	"github.com/samithiwat/elastic-with-go/src/domain/entity/section"
+	"github.com/samithiwat/elastic-with-go/src/pb"
 )
 
 type Course struct {
@@ -26,4 +27,28 @@ type Course struct {
 	Midterm         entity.ExamPeriod   `json:"midterm"`
 	Final           entity.ExamPeriod   `json:"final"`
 	Sections        []*section.Section  `json:"sections"`
+}
+
+func (e *Course) ToProto() *pb.Course {
+	return &pb.Course{
+		StudyProgram:    string(e.StudyProgram),
+		Semester:     "",
+		AcademicYear: "",
+		CourseNo:     "",
+		CourseNameTh: "",
+		CourseNameEn: "",
+		CourseDescTh: "",
+		CourseDescEn: "",
+		AbbrName:     "",
+		Faculty:      "",
+		Department:   "",
+		Credit:          0,
+		CreditHour:      0,
+		CourseCondition: "",
+		GenEdType:       "",
+		Rating:          "",
+		Midterm:         nil,
+		Final:           nil,
+		Sections:        nil,
+	}
 }
