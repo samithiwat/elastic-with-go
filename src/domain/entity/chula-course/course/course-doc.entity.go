@@ -7,5 +7,5 @@ type CourseDoc struct {
 	CourseNameEn string  `json:"courseNameEn"`
 	CourseDescTh string  `json:"courseDescTh"`
 	CourseDescEn string  `json:"courseDescEn"`
-	RawData      *Course `json:"raw_data"`
+	RawData      *Course `json:"rawData"`
 }
