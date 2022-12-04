@@ -38,10 +38,8 @@ func main() {
 
 	res, err := client.Search().Index("course_3").Request(&search.Request{
 		Query: &types.Query{
-			Match: map[string]types.MatchQuery{
-				"courseNameEn": {
-					Query: "marketing",
-				},
+			QueryString: &types.QueryStringQuery{
+				Query: "marketing",
 			},
 		},
 	}).Do(ctx)
@@ -60,13 +58,16 @@ func main() {
 	}
 
 	for pos, hit := range result.Hits.Hits {
-		fmt.Printf("Result %d: ", pos)
-		fmt.Printf("AbbrName: %s\n", hit.Source.AbbrName)
-		fmt.Printf("CourseNo: %s\n", hit.Source.CourseNo)
-		fmt.Printf("CourseNameTh: %s\n", hit.Source.CourseNameTh)
-		fmt.Printf("CourseNameEn: %s\n", hit.Source.CourseNameEn)
-		fmt.Printf("CourseDescTh: %s\n", hit.Source.CourseDescTh)
-		fmt.Printf("CourseDescEn: %s\n", hit.Source.CourseDescEn)
+		fmt.Printf("Result %d\n ", pos)
+		fmt.Printf("Score: %f\n", hit.Score)
+		fmt.Println("{")
+		fmt.Printf("\tAbbrName: %s\n", hit.Source.AbbrName)
+		fmt.Printf("\tCourseNo: %s\n", hit.Source.CourseNo)
+		fmt.Printf("\tCourseNameTh: %s\n", hit.Source.CourseNameTh)
+		fmt.Printf("\tCourseNameEn: %s\n", hit.Source.CourseNameEn)
+		fmt.Printf("\tCourseDescTh: %s\n", hit.Source.CourseDescTh)
+		fmt.Printf("\tCourseDescEn: %s\n", hit.Source.CourseDescEn)
+		fmt.Println("}")
 		//fmt.Printf("RawData: %s", hit.Source.AbbrName)
 	}
 }
