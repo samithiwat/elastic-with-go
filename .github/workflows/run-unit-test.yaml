@@ -27,5 +27,5 @@ jobs:
 
       - name: Test
         run: |
-          go test  -v -coverpkg ./src/domain/... -coverprofile coverage.out -covermode count ./src/...
+          go test  -v -coverpkg ./src/domain/... -coverprofile coverage.out -covermode count ./src/internal/...
           go tool cover -func="./coverage.out"
