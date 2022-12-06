@@ -7,7 +7,7 @@
   "mappings": {
     "properties": {
       "rawData": { "type": "object" },
-      "AbbrName": {
+      "abbrName": {
         "type": "text"
       },
       "courseNo": {
