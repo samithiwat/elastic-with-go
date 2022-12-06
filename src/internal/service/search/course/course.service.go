@@ -5,10 +5,10 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/course"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
+	cacheRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/cache"
+	courseSearchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/search/course"
 	"github.com/samithiwat/elastic-with-go/src/pb"
-	cacheRepo "github.com/samithiwat/elastic-with-go/src/repository/cache"
-	courseSearchRepo "github.com/samithiwat/elastic-with-go/src/repository/search/course"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

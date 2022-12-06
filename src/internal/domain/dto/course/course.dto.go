@@ -1,8 +1,8 @@
 package course
 
 import (
-	"github.com/samithiwat/elastic-with-go/src/domain/dto"
-	"github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/course"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/dto"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 )
 
 type QueryResult struct {

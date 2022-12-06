@@ -1,7 +1,7 @@
 package class
 
 import (
-	common "github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/common"
+	common "github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/common"
 	"github.com/samithiwat/elastic-with-go/src/pb"
 )
 

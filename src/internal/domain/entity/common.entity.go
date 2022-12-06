@@ -2,7 +2,7 @@ package entity
 
 import (
 	"github.com/google/uuid"
-	"github.com/samithiwat/elastic-with-go/src/domain/utils"
+	"github.com/samithiwat/elastic-with-go/src/internal/utils"
 	"github.com/samithiwat/elastic-with-go/src/pb"
 	"gorm.io/gorm"
 	"time"

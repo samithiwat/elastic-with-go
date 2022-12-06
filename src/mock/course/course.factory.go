@@ -3,11 +3,11 @@ package course
 import (
 	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
-	"github.com/samithiwat/elastic-with-go/src/domain/entity"
-	"github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/class"
-	common "github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/common"
-	"github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/course"
-	"github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/section"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/class"
+	common "github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/common"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/section"
 	"math/rand"
 )
 

@@ -5,7 +5,7 @@ import (
 	"github.com/go-faker/faker/v4"
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
-	"github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/course"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	cacheMock "github.com/samithiwat/elastic-with-go/src/mock/cache"
 	courseMock "github.com/samithiwat/elastic-with-go/src/mock/course"
 	courseSearchMock "github.com/samithiwat/elastic-with-go/src/mock/search/course"

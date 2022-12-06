@@ -4,12 +4,12 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/mitchellh/mapstructure"
-	courseDto "github.com/samithiwat/elastic-with-go/src/domain/dto/course"
-	"github.com/samithiwat/elastic-with-go/src/domain/entity/chula-course/course"
+	courseDto "github.com/samithiwat/elastic-with-go/src/internal/domain/dto/course"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	searchRepo "github.com/samithiwat/elastic-with-go/src/repository/search"
+	searchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/search"
 )
 
 var IndexName = "course_4"
