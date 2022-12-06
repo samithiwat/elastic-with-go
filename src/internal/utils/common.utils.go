@@ -12,6 +12,10 @@ func BoolAdr(b bool) *bool {
 	return &b
 }
 
+func StringAdr(in string) *string {
+	return &in
+}
+
 func UUIDAdr(in uuid.UUID) *uuid.UUID {
 	return &in
 }
