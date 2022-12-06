@@ -6,11 +6,10 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/rs/zerolog/log"
-	"github.com/samithiwat/elastic-with-go/src/domain/entity/course"
+	"github.com/samithiwat/elastic-with-go/_example_apps/domain/entity/chula-course/course"
 	"os"
 )
 
-// TODO: Insert using bulk index
 // Assume we already had an index
 
 func main() {
@@ -65,7 +64,7 @@ func main() {
 			RawData:      c,
 		}
 
-		if _, err := client.Create("course_3", c.ID.OID, esutil.NewJSONReader(courseDoc)); err != nil {
+		if _, err := client.Create("course", c.ID.OID, esutil.NewJSONReader(courseDoc)); err != nil {
 			log.Fatal().
 				Err(err).
 				Msg("Error while create data to elasticsearch database")
