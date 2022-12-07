@@ -91,7 +91,6 @@ fabric.properties
 .idea
 
 # config file
-rabbitmq
 elasticsearch.yaml
 app.yaml
 redis.yaml
