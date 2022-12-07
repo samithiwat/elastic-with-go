@@ -89,7 +89,7 @@ func main() {
 			Msg("Failed to start service")
 	}
 
-	esClient, err := database.InitElasticClient(conf.App.Debug)
+	esClient, err := database.InitElasticTypedClient(conf.App.Debug)
 	if err != nil {
 		log.Fatal().
 			Err(err).
