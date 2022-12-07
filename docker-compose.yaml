@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
-      - esdata:/usr/share/elasticsearch/data
+      - elasticsearch_data:/usr/share/elasticsearch/data
     environment:
       - ES_JAVA_OPTS=-Xms750m -Xmx750m
       - ELASTIC_PASSWORD=admin
@@ -18,7 +18,7 @@ services:
       - xpack.security.enabled=true
       - xpack.security.enrollment.enabled=true
     networks:
-      - esnet
+      - elasticsearch_network
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -39,27 +39,30 @@ services:
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
     networks:
-      - esnet
+      - elasticsearch_network
     ports:
       - "5601:5601"
 
   local-rabbitmq:
-    image: rabbitmq:3.8.33-management-alpine
+    image: rabbitmq:3.9.26-management-alpine
     container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     volumes:
-      - ./rabbitmq/data/:/var/lib/rabbitmq/
-      - ./rabbitmq/config/config.conf:/etc/rabbitmq/rabbitmq.config
-      - ./rabbitmq/log/:/var/log/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq
 
 volumes:
   certs:
     driver: local
-  esdata:
+  elasticsearch_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  rabbitmq_log:
     driver: local
 
 networks:
-  esnet:
-    name: esnet
+  elasticsearch_network:
+    name: elasticsearch_network
