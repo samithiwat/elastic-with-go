@@ -12,7 +12,7 @@ import (
 	searchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/search"
 )
 
-var IndexName = "course_4"
+const IndexName = "course"
 
 type repository struct {
 	searchRepo searchRepo.Repository

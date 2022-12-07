@@ -9,7 +9,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/rs/zerolog/log"
-	courseDto "github.com/samithiwat/elastic-with-go/src/domain/dto/course"
+	courseDto "github.com/samithiwat/elastic-with-go/_example_apps/domain/dto/course"
 	"os"
 	"time"
 )
@@ -36,7 +36,7 @@ func main() {
 
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 
-	res, err := client.Search().Index("course_3").Request(&search.Request{
+	res, err := client.Search().Index("course").Request(&search.Request{
 		Query: &types.Query{
 			QueryString: &types.QueryStringQuery{
 				Query: "marketing",
