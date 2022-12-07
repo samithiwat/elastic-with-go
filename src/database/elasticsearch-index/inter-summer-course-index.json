@@ -29,6 +29,21 @@
       },
       "courseDescEn": {
         "type": "text"
+      },
+      "genEdTypes": {
+        "type": "text"
+      },
+      "dayOfWeeks": {
+        "type": "text"
+      },
+      "periodRange": {
+        "type": "text"
+      },
+      "semester": {
+        "type": "text"
+      },
+      "academicYear": {
+        "type": "text"
       }
     }
   }
