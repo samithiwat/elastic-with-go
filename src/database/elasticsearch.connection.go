@@ -7,7 +7,36 @@ import (
 	"os"
 )
 
-func InitElasticClient(isDebug bool) (*elasticsearch.TypedClient, error) {
+func InitElasticDefaultClient(isDebug bool) (*elasticsearch.Client, error) {
+	conf, err := config.LoadElasticsearchConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	esConf := elasticsearch.Config{
+		Addresses: []string{conf.Host},
+		Username:  conf.Username,
+		Password:  conf.Password,
+	}
+
+	if isDebug {
+		esConf.Logger = &elastictransport.ColorLogger{
+			Output:             os.Stdout,
+			EnableRequestBody:  true,
+			EnableResponseBody: true,
+		}
+	}
+
+	client, err := elasticsearch.NewClient(esConf)
+
+	if _, err := client.Info(); err != nil {
+		return nil, err
+	}
+
+	return client, nil
+}
+
+func InitElasticTypedClient(isDebug bool) (*elasticsearch.TypedClient, error) {
 	conf, err := config.LoadElasticsearchConfig()
 	if err != nil {
 		return nil, err
