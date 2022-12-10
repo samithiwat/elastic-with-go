@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	cacheRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/cache"
-	courseSearchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/search/course"
+	courseSearchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch/course"
 	"github.com/samithiwat/elastic-with-go/src/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

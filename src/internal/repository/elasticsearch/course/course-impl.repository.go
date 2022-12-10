@@ -10,13 +10,14 @@ import (
 	searchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"sync"
 )
 
 type repository struct {
 	searchRepo searchRepo.Repository
 }
 
-func NewRepository(searchRepo searchRepo.Repository) SearchRepository {
+func NewRepository(searchRepo searchRepo.Repository) Repository {
 	return &repository{searchRepo: searchRepo}
 }
 
@@ -46,4 +47,31 @@ func (r repository) Search(queryString string, result *[]*course.Course) error {
 	}
 
 	return nil
+}
+
+func (r repository) Insert(s string, c *course.Course) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r repository) BulkInsert(docID string, courseList *[]*course.Course) error {
+	var courseDocList []*course.CourseDoc
+
+	var wg sync.WaitGroup
+
+	for pos, c := range *courseList {
+		courseDoc := &course.CourseDoc{
+			AbbrName:     c.AbbrName,
+			CourseNo:     c.CourseNo,
+			CourseNameTh: c.CourseNameTh,
+			CourseNameEn: c.CourseNameEn,
+			CourseDescTh: c.CourseDescTh,
+			CourseDescEn: c.CourseDescEn,
+			RawData:      c,
+		}
+		courseDocList = append(courseDocList, courseDoc)
+
+	}
+
+	wg.Wait()
 }

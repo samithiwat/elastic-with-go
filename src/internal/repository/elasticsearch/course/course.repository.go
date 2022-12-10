@@ -2,6 +2,8 @@ package course
 
 import "github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 
-type SearchRepository interface {
+type Repository interface {
 	Search(string, *[]*course.Course) error
+	Insert(string, *course.Course) error
+	BulkInsert(string, *[]*course.Course) error
 }
