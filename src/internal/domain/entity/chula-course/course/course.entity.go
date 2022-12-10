@@ -61,3 +61,22 @@ func (e *Course) ToProto() *pb.Course {
 		Sections:        sectionList,
 	}
 }
+
+func (e *Course) ToDoc() any {
+	return &CourseDoc{
+		AbbrName:     e.AbbrName,
+		CourseNo:     e.CourseNo,
+		CourseNameTh: e.CourseNameTh,
+		CourseNameEn: e.CourseNameEn,
+		CourseDescTh: e.CourseDescTh,
+		CourseDescEn: e.CourseDescEn,
+		GenEdType:    string(e.GenEdType),
+		Semester:     string(e.Semester),
+		AcademicYear: e.AcademicYear,
+		RawData:      e,
+	}
+}
+
+func (e *Course) GetID() string {
+	return e.ID.OID
+}

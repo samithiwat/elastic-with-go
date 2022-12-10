@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+type ElasticsearchDocumentAble interface {
+	ToDoc() any
+	GetID() string
+}
+
 type BaseMongo struct {
 	ID ObjectID `json:"_id"`
 }
