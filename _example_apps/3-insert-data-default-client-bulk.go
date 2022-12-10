@@ -3,12 +3,12 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/elastic/elastic-transport-go/v8/elastictransport"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/rs/zerolog/log"
 	"github.com/samithiwat/elastic-with-go/_example_apps/constant"
 	"github.com/samithiwat/elastic-with-go/_example_apps/domain/entity/chula-course/course"
+	"github.com/samithiwat/elastic-with-go/_example_apps/utils"
 	"os"
 )
 
@@ -72,7 +72,7 @@ func main() {
 		}
 		courseDocList = append(courseDocList, courseDoc)
 
-		if err := appendDocToBuffer(c.ID.OID, courseDoc, &buf); err != nil {
+		if err := utils.AppendDocToBuffer(c.ID.OID, courseDoc, &buf); err != nil {
 			log.Fatal().
 				Err(err).
 				Msg("Error while create request body")
@@ -132,19 +132,4 @@ func main() {
 		}
 
 	}
-}
-
-func appendDocToBuffer(docId string, docData interface{}, buf *bytes.Buffer) error {
-	meta := []byte(fmt.Sprintf(`{ "index" : { "_id" : "%s" } }%s`, docId, "\n"))
-	data, err := json.Marshal(docData)
-	if err != nil {
-		return err
-	}
-	data = append(data, "\n"...)
-
-	buf.Grow(len(meta) + len(data))
-	buf.Write(meta)
-	buf.Write(data)
-
-	return nil
 }
