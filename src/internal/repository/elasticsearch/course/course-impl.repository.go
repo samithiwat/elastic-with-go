@@ -4,15 +4,13 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/mitchellh/mapstructure"
+	elasticsearchConstant "github.com/samithiwat/elastic-with-go/src/constant/elasticsearch"
 	courseDto "github.com/samithiwat/elastic-with-go/src/internal/domain/dto/course"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
+	searchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	searchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/search"
 )
-
-const IndexName = "course"
 
 type repository struct {
 	searchRepo searchRepo.Repository
@@ -33,7 +31,7 @@ func (r repository) Search(queryString string, result *[]*course.Course) error {
 		},
 	}
 
-	if err := r.searchRepo.Search(IndexName, &req, &queryResultMap); err != nil {
+	if err := r.searchRepo.Search(elasticsearchConstant.CourseIndexName, &req, &queryResultMap); err != nil {
 		return status.Error(codes.Unavailable, err.Error())
 	}
 
