@@ -7,23 +7,23 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	cacheRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/cache"
-	courseSearchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch/course"
+	courseRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch/course"
 	"github.com/samithiwat/elastic-with-go/src/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type service struct {
-	courseSearchRepo courseSearchRepo.SearchRepository
-	cacheRepo        cacheRepo.Repository
-	cacheTTL         int
+	courseRepo courseRepo.Repository
+	cacheRepo  cacheRepo.Repository
+	cacheTTL   int
 }
 
-func NewService(courseSearchRepo courseSearchRepo.SearchRepository, cacheRepo cacheRepo.Repository, cacheTTL int) pb.SearchServiceServer {
+func NewService(courseRepo courseRepo.Repository, cacheRepo cacheRepo.Repository, cacheTTL int) pb.SearchServiceServer {
 	return &service{
-		courseSearchRepo: courseSearchRepo,
-		cacheRepo:        cacheRepo,
-		cacheTTL:         cacheTTL,
+		courseRepo: courseRepo,
+		cacheRepo:  cacheRepo,
+		cacheTTL:   cacheTTL,
 	}
 }
 
@@ -43,7 +43,7 @@ func (s *service) Search(_ context.Context, req *pb.SearchRequest) (*pb.SearchRe
 
 		var queryResult []*course.Course
 
-		if err := s.courseSearchRepo.Search(req.QueryString, &queryResult); err != nil {
+		if err := s.courseRepo.Search(req.QueryString, &queryResult); err != nil {
 			log.Error().
 				Err(err).
 				Str("service", "course_search").
