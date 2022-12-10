@@ -1,6 +1,7 @@
 package course
 
 import (
+	"bytes"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/mitchellh/mapstructure"
@@ -8,18 +9,18 @@ import (
 	elasticsearchConstant "github.com/samithiwat/elastic-with-go/src/constant/elasticsearch"
 	courseDto "github.com/samithiwat/elastic-with-go/src/internal/domain/dto/course"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
-	courseEsRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
+	esRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
+	elasticsearchUtils "github.com/samithiwat/elastic-with-go/src/internal/utils/elasticsearch"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"sync"
 )
 
 type repository struct {
-	courseEsRepo courseEsRepo.Repository
+	esRepo esRepo.Repository
 }
 
-func NewRepository(courseEsRepo courseEsRepo.Repository) Repository {
-	return &repository{courseEsRepo: courseEsRepo}
+func NewRepository(esRepo esRepo.Repository) Repository {
+	return &repository{esRepo: esRepo}
 }
 
 func (r repository) Search(queryString string, result *[]*course.Course) error {
@@ -33,7 +34,7 @@ func (r repository) Search(queryString string, result *[]*course.Course) error {
 		},
 	}
 
-	if err := r.courseEsRepo.Search(elasticsearchConstant.CourseIndexName, &req, &queryResultMap); err != nil {
+	if err := r.esRepo.Search(elasticsearchConstant.CourseIndexName, &req, &queryResultMap); err != nil {
 		return status.Error(codes.Unavailable, err.Error())
 	}
 
@@ -51,41 +52,49 @@ func (r repository) Search(queryString string, result *[]*course.Course) error {
 }
 
 func (r repository) Insert(docID string, course *course.Course) error {
-	return r.courseEsRepo.Insert(elasticsearchConstant.CourseIndexName, docID, course)
+	return r.esRepo.Insert(elasticsearchConstant.CourseIndexName, docID, course)
 }
 
 func (r repository) BulkInsert(courseList *[]*course.Course) error {
 	var (
-		courseDocList []*course.CourseDoc
-		wg            sync.WaitGroup
-		nDocList      = len(*courseList)
+		nDocList     = len(*courseList)
+		buf          = bytes.Buffer{}
+		currentBatch = 0
 	)
 
-	for pos, c := range *courseList {
-		courseDoc := &course.CourseDoc{
-			AbbrName:     c.AbbrName,
-			CourseNo:     c.CourseNo,
-			CourseNameTh: c.CourseNameTh,
-			CourseNameEn: c.CourseNameEn,
-			CourseDescTh: c.CourseDescTh,
-			CourseDescEn: c.CourseDescEn,
-			RawData:      c,
-		}
-		courseDocList = append(courseDocList, courseDoc)
-
+	for pos, datum := range *courseList {
 		pos := pos
-		docID := c.ID.OID
-		go func() {
-			wg.Add(1)
-			defer wg.Done()
-			if err := r.courseEsRepo.InsertBulk(elasticsearchConstant.CourseIndexName, docID, &courseDoc, pos, nDocList); err != nil {
+		doc := datum.ToDoc()
+		docID := datum.GetID()
+
+		if err := elasticsearchUtils.AppendDocToBuffer(docID, doc, &buf); err != nil {
+			log.Error().
+				Err(err).
+				Msg("Error while create request body")
+			return err
+		}
+
+		currentBatch = pos / elasticsearchConstant.DocPerBatch
+		if pos == nDocList-1 {
+			currentBatch++
+		}
+
+		if pos > 0 && pos%elasticsearchConstant.DocPerBatch == 0 || pos == nDocList-1 {
+			if err := r.esRepo.InsertBulk(elasticsearchConstant.CourseIndexName, &buf); err != nil {
 				log.Error().
 					Err(err).
-					Msg("Error while insert course data to elasticsearch database")
+					Str("service", "course elasticsearch repository").
+					Str("module", "insert bulk").
+					Msg("Error while insert bulk data")
 			}
-		}()
+			buf.Reset()
+		}
 	}
 
-	wg.Wait()
+	log.Info().
+		Str("service", "course elasticsearch repository").
+		Str("module", "insert bulk").
+		Msg("Successfully insert bulk data")
+
 	return nil
 }
