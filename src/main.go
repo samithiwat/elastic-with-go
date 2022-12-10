@@ -149,18 +149,18 @@ func main() {
 			Msg("Failed to initial the course subscriber")
 	}
 
-	insertCourseDataHandler := courseSubscriberHandler.NewCourseSubscriberHandler(esDefaultClient)
-	insertCourseDataSubscriber.RegisterHandler(insertCourseDataHandler.InsertData)
-
 	cacheRepository := cacheRepo.NewRepository(redisClient)
 
-	searchRepository := searchRepo.NewRepository(esTypedClient)
+	esRepo := searchRepo.NewRepository(esTypedClient, esDefaultClient)
 
-	courseSearchRepository := courseSearchRepo.NewRepository(searchRepository)
+	courseRepo := courseSearchRepo.NewRepository(esRepo)
 
-	courseService := courseSrv.NewService(courseSearchRepository, cacheRepository, conf.App.CacheTTL)
+	courseService := courseSrv.NewService(courseRepo, cacheRepository, conf.App.CacheTTL)
 
 	grpcServer := grpc.NewServer()
+
+	insertCourseDataHandler := courseSubscriberHandler.NewCourseSubscriberHandler(courseRepo)
+	insertCourseDataSubscriber.RegisterHandler(insertCourseDataHandler.InsertData)
 
 	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
 	pb.RegisterSearchServiceServer(grpcServer, courseService)
