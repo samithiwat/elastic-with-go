@@ -8,9 +8,12 @@ This project is the POC for [CU Get Reg](https://cugetreg.com) and [CU Newbie](h
 - Create Index
   - [x] CLI
   - [ ] API
+- Reindex
+  - [ ] CLI
+  - [ ] API
 - Insert Data
   - [ ] Bulk API
-  - [ ] CQRS
+  - [x] CQRS
 - Search
   - [x] Search with basic query string
   - [ ] Advance search with query string (specific fields)
@@ -21,7 +24,7 @@ This project is the POC for [CU Get Reg](https://cugetreg.com) and [CU Newbie](h
 - gRPC
 - elasticsearch
 - redis
-- rabbitmq (later)
+- rabbitmq
 
 ## Getting Start
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.

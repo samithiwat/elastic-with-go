@@ -94,3 +94,4 @@ fabric.properties
 elasticsearch.yaml
 app.yaml
 redis.yaml
+rabbitmq.yaml

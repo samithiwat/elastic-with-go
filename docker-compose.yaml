@@ -17,8 +17,6 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=true
       - xpack.security.enrollment.enabled=true
-    networks:
-      - elasticsearch_network
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -32,17 +30,6 @@ services:
       timeout: 10s
       retries: 120
 
-  kibana:
-    image: kibana:8.4.2
-    container_name: kibana
-    restart: unless-stopped
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-    networks:
-      - elasticsearch_network
-    ports:
-      - "5601:5601"
-
   local-rabbitmq:
     image: rabbitmq:3.9.26-management-alpine
     container_name: rabbitmq
@@ -53,6 +40,18 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq/
       - rabbitmq_log:/var/log/rabbitmq
 
+  local-cache:
+    image: bitnami/redis:6.2.6
+    container_name: local-cache
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: localhost
+      ALLOW_EMPTY_PASSWORD: "yes"
+    networks:
+      - database
+    ports:
+      - "6379:6379"
+
 volumes:
   certs:
     driver: local
@@ -62,7 +61,3 @@ volumes:
     driver: local
   rabbitmq_log:
     driver: local
-
-networks:
-  elasticsearch_network:
-    name: elasticsearch_network

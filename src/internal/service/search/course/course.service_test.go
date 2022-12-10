@@ -77,9 +77,11 @@ func (t *CourseSearchServiceTest) TestSearchNotCachedSuccessfully() {
 	courseSearchRepo := courseSearchMock.RepositoryMock{}
 	courseSearchRepo.On("Search", queryString, &emptyCourseList).Return(&t.CourseList, nil)
 
-	cacheRepo := cacheMock.RepositoryMock{}
+	cacheRepo := cacheMock.RepositoryMock{
+		V: map[string]interface{}{},
+	}
 	cacheRepo.On("GetCache", queryString, &emptyCourseDtoList).Return(nil, redis.Nil)
-	cacheRepo.On("SaveCache", queryString, t.CourseList, t.CacheTTL).Return(nil)
+	cacheRepo.On("SaveCache", queryString, &t.CourseDtoList, t.CacheTTL).Return(nil)
 
 	courseSearchSrv := NewService(&courseSearchRepo, &cacheRepo, t.CacheTTL)
 

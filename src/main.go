@@ -3,9 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	searchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/search"
-	courseSearchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/search/course"
+	courseConstant "github.com/samithiwat/elastic-with-go/src/constant/course"
+	searchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
+	courseSearchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch/course"
 	courseSrv "github.com/samithiwat/elastic-with-go/src/internal/service/search/course"
+	subscriberCommon "github.com/samithiwat/elastic-with-go/src/internal/subscriber/common"
+	courseSubscriberHandler "github.com/samithiwat/elastic-with-go/src/internal/subscriber/handler/course"
 	"github.com/samithiwat/elastic-with-go/src/pb"
 	"net"
 	"os"
@@ -89,7 +92,15 @@ func main() {
 			Msg("Failed to start service")
 	}
 
-	esClient, err := database.InitElasticTypedClient(conf.App.Debug)
+	esTypedClient, err := database.InitElasticTypedClient(conf.App.Debug)
+	if err != nil {
+		log.Fatal().
+			Err(err).
+			Str("service", "search").
+			Msg("Failed to init elasticsearch client")
+	}
+
+	esDefaultClient, err := database.InitElasticDefaultClient(conf.App.Debug)
 	if err != nil {
 		log.Fatal().
 			Err(err).
@@ -105,6 +116,14 @@ func main() {
 			Msg("Failed to init redis client")
 	}
 
+	rabbitMQConn, err := database.InitRabbitMQConnection()
+	if err != nil {
+		log.Fatal().
+			Err(err).
+			Str("service", "search").
+			Msg("Failed to init rabbitmq connection")
+	}
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", conf.App.Port))
 	if err != nil {
 		log.Fatal().
@@ -114,20 +133,54 @@ func main() {
 	}
 	defer lis.Close()
 
+	subscriberManagement, err := subscriberCommon.NewSubscriberManagement()
+	if err != nil {
+		log.Fatal().
+			Err(err).
+			Str("service", "search").
+			Msg("Failed to initial the subscriber management")
+	}
+
+	insertCourseDataSubscriber, err := subscriberCommon.NewSubscriber(rabbitMQConn, subscriberManagement.GetErrCh(), courseConstant.InsertDataTopicList, courseConstant.ExchangeKind, courseConstant.ExchangeName)
+	if err != nil {
+		log.Fatal().
+			Err(err).
+			Str("service", "search").
+			Msg("Failed to initial the course subscriber")
+	}
+
 	cacheRepository := cacheRepo.NewRepository(redisClient)
 
-	searchRepository := searchRepo.NewRepository(esClient)
+	esRepo := searchRepo.NewRepository(esTypedClient, esDefaultClient)
 
-	courseSearchRepository := courseSearchRepo.NewRepository(searchRepository)
+	courseRepo := courseSearchRepo.NewRepository(esRepo)
 
-	courseService := courseSrv.NewService(courseSearchRepository, cacheRepository, conf.App.CacheTTL)
+	courseService := courseSrv.NewService(courseRepo, cacheRepository, conf.App.CacheTTL)
 
 	grpcServer := grpc.NewServer()
 
+	insertCourseDataHandler := courseSubscriberHandler.NewCourseSubscriberHandler(courseRepo)
+	insertCourseDataSubscriber.RegisterHandler(insertCourseDataHandler.InsertData)
+
 	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
 	pb.RegisterSearchServiceServer(grpcServer, courseService)
+	subscriberManagement.Register(insertCourseDataSubscriber)
 
 	reflection.Register(grpcServer)
+
+	go func() {
+		log.Info().
+			Str("service", "search").
+			Msg("Starting the subscriber service")
+
+		if err := subscriberManagement.Serve(); err != nil {
+			log.Fatal().
+				Err(err).
+				Str("service", "search").
+				Msg("Failed to serve the subscribers")
+		}
+	}()
+
 	go func() {
 		log.Info().
 			Str("service", "search").
@@ -149,6 +202,13 @@ func main() {
 			grpcServer.GracefulStop()
 			return nil
 		},
+		"rabbitmq": func(ctx context.Context) error {
+			if err := subscriberManagement.GracefulShutdown(); err != nil {
+				return err
+			}
+
+			return rabbitMQConn.Close()
+		},
 	})
 
 	<-wait
@@ -157,5 +217,5 @@ func main() {
 
 	log.Info().
 		Str("service", "search").
-		Msg("End of Program")
+		Msg("End of service")
 }
