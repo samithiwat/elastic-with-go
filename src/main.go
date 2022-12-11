@@ -157,7 +157,7 @@ func main() {
 
 	courseService := courseSrv.NewService(courseRepo, cacheRepository, conf.App.CacheTTL)
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.MaxRecvMsgSize(conf.App.MaxFileSize * 1024 * 1024))
 
 	insertCourseDataHandler := courseSubscriberHandler.NewCourseSubscriberHandler(courseRepo)
 	insertCourseDataSubscriber.RegisterHandler(insertCourseDataHandler.InsertData)
