@@ -25,6 +25,9 @@
       "genEdTypes": {
         "type": "keyword"
       },
+      "studyProgram": {
+        "type": "keyword"
+      },
       "semester": {
         "type": "keyword"
       },

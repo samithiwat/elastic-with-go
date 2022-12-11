@@ -71,6 +71,7 @@ func (e *Course) ToDoc() any {
 		CourseDescTh: e.CourseDescTh,
 		CourseDescEn: e.CourseDescEn,
 		GenEdType:    string(e.GenEdType),
+		StudyProgram: string(e.StudyProgram),
 		Semester:     string(e.Semester),
 		AcademicYear: e.AcademicYear,
 		RawData:      e,
