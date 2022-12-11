@@ -6,7 +6,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/mitchellh/mapstructure"
 	"github.com/rs/zerolog/log"
-	elasticsearchConstant "github.com/samithiwat/elastic-with-go/src/constant/elasticsearch"
+	elasticsearchConstant "github.com/samithiwat/elastic-with-go/src/common/constant/elasticsearch"
 	courseDto "github.com/samithiwat/elastic-with-go/src/internal/domain/dto/course"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	esRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
