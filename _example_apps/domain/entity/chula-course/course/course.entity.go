@@ -20,7 +20,7 @@ type Course struct {
 	AbbrName        string              `json:"abbrName" mapstructure:"abbrName"`
 	Faculty         string              `json:"faculty" mapstructure:"faculty"`
 	Department      string              `json:"department" mapstructure:"department"`
-	Credit          uint                `json:"credit" mapstructure:"credit"`
+	Credit          float32             `json:"credit" mapstructure:"credit"`
 	CreditHour      uint                `json:"creditHour" mapstructure:"creditHour"`
 	CourseCondition string              `json:"courseCondition" mapstructure:"courseCondition"`
 	GenEdType       common.GenEdType    `json:"genEdType" mapstructure:"genEdType"`
