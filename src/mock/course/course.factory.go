@@ -34,7 +34,7 @@ func CreateCourse(isIncludedID bool) *course.Course {
 		AbbrName:        faker.Word(),
 		Faculty:         faker.Word(),
 		Department:      faker.Word(),
-		Credit:          uint(rand.Intn(5)) + 1,
+		Credit:          float32(rand.Intn(5)) + 1,
 		CreditHour:      uint(rand.Intn(5)) + 1,
 		CourseCondition: faker.Sentence(),
 		GenEdType:       common.GenEdType(faker.Word()),
