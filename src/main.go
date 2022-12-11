@@ -184,7 +184,7 @@ func main() {
 	go func() {
 		log.Info().
 			Str("service", "search").
-			Msgf("Newbie search starting at port %v", conf.App.Port)
+			Msgf("Search service starting at port %v", conf.App.Port)
 
 		if err = grpcServer.Serve(lis); err != nil {
 			log.Fatal().
