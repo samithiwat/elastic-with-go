@@ -14,30 +14,22 @@
         "type": "text"
       },
       "courseNo": {
-        "type": "text"
-      },
-      "courseNameTh": {
-        "type": "text",
-        "analyzer": "thai"
+        "type": "keyword"
       },
       "courseNameEn": {
         "type": "text"
-      },
-      "courseDescTh": {
-        "type": "text",
-        "analyzer": "thai"
       },
       "courseDescEn": {
         "type": "text"
       },
       "genEdTypes": {
-        "type": "text"
+        "type": "keyword"
       },
       "semester": {
-        "type": "text"
+        "type": "keyword"
       },
       "academicYear": {
-        "type": "text"
+        "type": "keyword"
       }
     }
   }
