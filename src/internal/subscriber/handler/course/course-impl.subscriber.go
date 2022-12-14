@@ -27,6 +27,7 @@ func (h handler) InsertData(ctx context.Context) {
 		log.Error().
 			Err(err).
 			Msg("Error while parsing course to struct")
+		return
 	}
 
 	if err := h.courseRepo.BulkInsert(&courseList); err != nil {
