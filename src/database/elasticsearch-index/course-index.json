@@ -5,6 +5,24 @@
   "settings": {
     "index": {
       "number_of_shards": 1
+    },
+    "analysis": {
+      "filter": {
+        "thai_stop": {
+          "type":       "stop",
+          "stopwords":  "_thai_"
+        }
+      },
+      "analyzer": {
+        "thai": {
+          "tokenizer":  "thai",
+          "filter": [
+            "lowercase",
+            "decimal_digit",
+            "thai_stop"
+          ]
+        }
+      }
     }
   },
   "mappings": {
@@ -49,6 +67,14 @@
       },
       "courseDescEn": {
         "type": "text"
+      },
+      "courseNameTh": {
+        "type": "text",
+        "analyzer": "thai"
+      },
+      "courseDescTh": {
+        "type": "text",
+        "analyzer": "thai"
       },
       "genEdType": {
         "type": "keyword"
