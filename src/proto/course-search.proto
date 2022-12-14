@@ -66,7 +66,15 @@ message Period{
 // Search
 
 message SearchRequest{
-  string QueryString = 1;
+  string Keyword = 1;
+  repeated string GenEdType = 2;
+  repeated string DayOfWeek = 3;
+  Period PeriodRange = 4;
+  string StudyProgram = 5;
+  string Semester = 6;
+  string AcademicYear = 7;
+  uint32 Limit = 8;
+  uint32 Offset = 9;
 }
 
 message SearchResponse{
