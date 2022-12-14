@@ -26,7 +26,7 @@ func (s *service) Search(_ context.Context, req *pb.SearchRequest) (*pb.SearchRe
 		queryResult []*course.Course
 	)
 
-	if err := s.courseRepo.Search(req.QueryString, &queryResult); err != nil {
+	if err := s.courseRepo.Search(req, &queryResult); err != nil {
 		log.Error().
 			Err(err).
 			Str("service", "course_search").
