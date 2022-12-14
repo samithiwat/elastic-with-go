@@ -1,0 +1,67 @@
+{
+  "aliases": {
+    "course": {}
+  },
+  "settings": {
+    "index": {
+      "number_of_shards": 1
+    }
+  },
+  "mappings": {
+    "properties": {
+      "rawData": {
+        "type": "nested",
+        "properties": {
+          "sections": {
+            "type": "nested",
+            "properties": {
+              "classes": {
+                "type": "nested",
+                "properties": {
+                  "dayOfWeek": {
+                    "type": "keyword"
+                  },
+                  "period": {
+                    "type": "object",
+                    "properties": {
+                      "start":{
+                        "type": "text"
+                      },
+                      "end":{
+                        "type": "text"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "abbrName": {
+        "type": "text"
+      },
+      "courseNo": {
+        "type": "keyword"
+      },
+      "courseNameEn": {
+        "type": "text"
+      },
+      "courseDescEn": {
+        "type": "text"
+      },
+      "genEdType": {
+        "type": "keyword"
+      },
+      "studyProgram": {
+        "type": "keyword"
+      },
+      "semester": {
+        "type": "keyword"
+      },
+      "academicYear": {
+        "type": "keyword"
+      }
+    }
+  }
+}
