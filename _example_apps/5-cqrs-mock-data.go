@@ -44,7 +44,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	body, err := os.ReadFile("./mock/semester-1-2565.json")
+	body, err := os.ReadFile("./mock/courses-demo.json")
 	if err != nil {
 		log.Fatal().
 			Err(err).
