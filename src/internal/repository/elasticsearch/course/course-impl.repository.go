@@ -2,6 +2,7 @@ package course
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/mitchellh/mapstructure"
@@ -11,6 +12,7 @@ import (
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	esRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
 	elasticsearchUtils "github.com/samithiwat/elastic-with-go/src/internal/utils/elasticsearch"
+	"github.com/samithiwat/elastic-with-go/src/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -23,13 +25,75 @@ func NewRepository(esRepo esRepo.Repository) Repository {
 	return &repository{esRepo: esRepo}
 }
 
-func (r repository) Search(queryString string, result *[]*course.Course) error {
+func (r repository) Search(in *pb.SearchRequest, result *[]*course.Course) error {
 	queryResultMap := map[string]interface{}{}
 
 	req := search.Request{
 		Query: &types.Query{
-			QueryString: &types.QueryStringQuery{
-				Query: queryString,
+			Bool: &types.BoolQuery{
+				Must: []types.Query{
+					{
+						MultiMatch: &types.MultiMatchQuery{
+							Query:  in.Keyword,
+							Fields: []string{"abbrName", "courseNo", "courseNameEn", "courseDescEn", "courseNameTh", "courseDescTh"},
+						},
+					},
+					{
+						Term: map[string]types.TermQuery{
+							"semester": {Value: in.Semester},
+						},
+					},
+					{
+						Term: map[string]types.TermQuery{
+							"studyProgram": {Value: in.StudyProgram},
+						},
+					},
+					{
+						Term: map[string]types.TermQuery{
+							"academicYear": {Value: in.AcademicYear},
+						},
+					},
+					{
+						Terms: &types.TermsQuery{
+							TermsQuery: map[string]types.TermsQueryField{
+								"genEdType": in.GenEdType,
+							},
+						},
+					},
+					{
+						Nested: &types.NestedQuery{
+							Path: "rawData",
+							Query: &types.Query{
+								Nested: &types.NestedQuery{
+									Path: "rawData.sections",
+									Query: &types.Query{
+										Nested: &types.NestedQuery{
+											Path: "rawData.sections.classes",
+											Query: &types.Query{
+												Bool: &types.BoolQuery{
+													Must: []types.Query{
+														{
+															Terms: &types.TermsQuery{
+																TermsQuery: map[string]types.TermsQueryField{
+																	"rawData.sections.classes.dayOfWeek": in.DayOfWeek,
+																},
+															},
+														},
+														{
+															QueryString: &types.QueryStringQuery{
+																Query: fmt.Sprintf("rawData.sections.classes.period.start:[%s TO %s] AND rawData.sections.classes.period.end:[* TO %s]", in.PeriodRange.Start, in.PeriodRange.End, in.PeriodRange.End),
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 		},
 	}
@@ -67,7 +131,7 @@ func (r repository) BulkInsert(courseList *[]*course.Course) error {
 		doc := datum.ToDoc()
 		docID := datum.GetID()
 
-		if err := elasticsearchUtils.AppendDocToBuffer(docID, doc, &buf); err != nil {
+		if err := elasticsearchUtils.AppendDocToBuffer(elasticsearchConstant.CourseIndexName, docID, doc, &buf); err != nil {
 			log.Error().
 				Err(err).
 				Msg("Error while create request body")
