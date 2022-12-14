@@ -2,6 +2,7 @@ package course
 
 import (
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
+	"github.com/samithiwat/elastic-with-go/src/pb"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -19,8 +20,8 @@ func (r *RepositoryMock) BulkInsert(i *[]*course.Course) error {
 	panic("implement me")
 }
 
-func (r *RepositoryMock) Search(queryString string, result *[]*course.Course) error {
-	args := r.Called(queryString, result)
+func (r *RepositoryMock) Search(in *pb.SearchRequest, result *[]*course.Course) error {
+	args := r.Called(in, result)
 
 	if args.Get(0) != nil {
 		*result = *args.Get(0).(*[]*course.Course)
