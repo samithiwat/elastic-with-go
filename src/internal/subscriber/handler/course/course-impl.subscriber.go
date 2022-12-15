@@ -14,12 +14,12 @@ type handler struct {
 }
 
 func NewCourseSubscriberHandler(courseRepo courseRepo.Repository) Handler {
-	return handler{
+	return &handler{
 		courseRepo: courseRepo,
 	}
 }
 
-func (h handler) InsertData(ctx context.Context) {
+func (h *handler) InsertData(ctx context.Context) {
 	raw := ctx.Value("message")
 	var courseList []*course.Course
 
