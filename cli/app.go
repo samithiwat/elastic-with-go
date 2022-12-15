@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/samithiwat/elastic-with-go/src/database"
 	"math/rand"
@@ -88,7 +89,7 @@ func handleCreateIndex(client *elasticsearch.Client) error {
 	}
 
 	if res.IsError() {
-		return err
+		return errors.New(res.String())
 	}
 
 	return nil

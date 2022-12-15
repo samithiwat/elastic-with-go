@@ -20,7 +20,7 @@ type Course struct {
 	AbbrName        string              `json:"abbrName" mapstructure:"abbrName"`
 	Faculty         string              `json:"faculty" mapstructure:"faculty"`
 	Department      string              `json:"department" mapstructure:"department"`
-	Credit          uint                `json:"credit" mapstructure:"credit"`
+	Credit          float32             `json:"credit" mapstructure:"credit"`
 	CreditHour      uint                `json:"creditHour" mapstructure:"creditHour"`
 	CourseCondition string              `json:"courseCondition" mapstructure:"courseCondition"`
 	GenEdType       common.GenEdType    `json:"genEdType" mapstructure:"genEdType"`
@@ -46,8 +46,8 @@ func (e *Course) ToProto() *pb.Course {
 		CourseNo:        e.CourseNo,
 		CourseNameTh:    e.CourseNameTh,
 		CourseNameEn:    e.CourseNameEn,
-		CourseDescTh:    e.CourseDescEn,
-		CourseDescEn:    e.CourseDescTh,
+		CourseDescTh:    e.CourseDescTh,
+		CourseDescEn:    e.CourseDescEn,
 		AbbrName:        e.AbbrName,
 		Faculty:         e.Faculty,
 		Department:      e.Department,
@@ -71,6 +71,7 @@ func (e *Course) ToDoc() any {
 		CourseDescTh: e.CourseDescTh,
 		CourseDescEn: e.CourseDescEn,
 		GenEdType:    string(e.GenEdType),
+		StudyProgram: string(e.StudyProgram),
 		Semester:     string(e.Semester),
 		AcademicYear: e.AcademicYear,
 		RawData:      e,

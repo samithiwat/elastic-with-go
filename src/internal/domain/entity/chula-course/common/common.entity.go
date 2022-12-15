@@ -8,18 +8,23 @@ type StudyProgram string
 type Semester string
 type GenEdType string
 type ClassType string
-type DauOfWeek string
+type DayOfWeek string
 
 type ExamPeriod struct {
-	Date   string `json:"date"`
-	Period Period `json:"period"`
+	Date   *string `json:"date"`
+	Period Period  `json:"period"`
 }
 
 func (e *ExamPeriod) ToProto() *pb.ExamPeriod {
-	return &pb.ExamPeriod{
-		Date:   e.Date,
+	result := &pb.ExamPeriod{
 		Period: e.Period.ToProto(),
 	}
+
+	if e.Date != nil {
+		result.Date = *e.Date
+	}
+
+	return result
 }
 
 type Capacity struct {

@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	courseConstant "github.com/samithiwat/elastic-with-go/src/constant/course"
+	courseConstant "github.com/samithiwat/elastic-with-go/src/common/constant/course"
 	searchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
 	courseSearchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch/course"
 	courseSrv "github.com/samithiwat/elastic-with-go/src/internal/service/search/course"
@@ -20,7 +20,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/samithiwat/elastic-with-go/src/config"
 	"github.com/samithiwat/elastic-with-go/src/database"
-	cacheRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/cache"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
@@ -108,14 +107,6 @@ func main() {
 			Msg("Failed to init elasticsearch client")
 	}
 
-	redisClient, err := database.InitRedisConnect()
-	if err != nil {
-		log.Fatal().
-			Err(err).
-			Str("service", "search").
-			Msg("Failed to init redis client")
-	}
-
 	rabbitMQConn, err := database.InitRabbitMQConnection()
 	if err != nil {
 		log.Fatal().
@@ -149,15 +140,13 @@ func main() {
 			Msg("Failed to initial the course subscriber")
 	}
 
-	cacheRepository := cacheRepo.NewRepository(redisClient)
-
 	esRepo := searchRepo.NewRepository(esTypedClient, esDefaultClient)
 
 	courseRepo := courseSearchRepo.NewRepository(esRepo)
 
-	courseService := courseSrv.NewService(courseRepo, cacheRepository, conf.App.CacheTTL)
+	courseService := courseSrv.NewService(courseRepo, conf.App.CacheTTL)
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.MaxRecvMsgSize(conf.App.MaxFileSize * 1024 * 1024))
 
 	insertCourseDataHandler := courseSubscriberHandler.NewCourseSubscriberHandler(courseRepo)
 	insertCourseDataSubscriber.RegisterHandler(insertCourseDataHandler.InsertData)
@@ -195,9 +184,6 @@ func main() {
 	}()
 
 	wait := gracefulShutdown(context.Background(), 2*time.Second, map[string]operation{
-		"cache": func(ctx context.Context) error {
-			return redisClient.Close()
-		},
 		"server": func(ctx context.Context) error {
 			grpcServer.GracefulStop()
 			return nil

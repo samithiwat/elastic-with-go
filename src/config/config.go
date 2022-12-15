@@ -6,9 +6,10 @@ import (
 )
 
 type App struct {
-	Port     int  `mapstructure:"port"`
-	Debug    bool `mapstructure:"debug"`
-	CacheTTL int  `mapstructure:"cache_ttl"`
+	Port        int  `mapstructure:"port"`
+	Debug       bool `mapstructure:"debug"`
+	CacheTTL    int  `mapstructure:"cache_ttl"`
+	MaxFileSize int  `mapstructure:"max_file_size"`
 }
 
 type AppConfig struct {

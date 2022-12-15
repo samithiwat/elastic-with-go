@@ -2,3 +2,4 @@ app:
   port: 3000
   debug: true
   cache_ttl: 900
+  max_file_size: 50

@@ -95,3 +95,7 @@ elasticsearch.yaml
 app.yaml
 redis.yaml
 rabbitmq.yaml
+
+# coverage
+coverage.html
+coverage.out

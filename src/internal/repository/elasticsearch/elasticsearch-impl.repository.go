@@ -7,6 +7,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"time"
 )
@@ -31,6 +32,11 @@ func (r repository) Search(indexName string, req *search.Request, result *map[st
 
 	if err != nil {
 		return err
+	}
+
+	if res.StatusCode > 200 {
+		// TODO add log error
+		return errors.New("Invalid query")
 	}
 
 	defer res.Body.Close()
@@ -65,7 +71,7 @@ func (r repository) InsertBulk(indexName string, buf *bytes.Buffer) error {
 			return err
 		}
 
-		log.Error().Msgf("  Error: [%d] %s: %s",
+		log.Error().Msgf("Error: [%d] %s: %s",
 			res.StatusCode,
 			raw["error"].(map[string]interface{})["type"],
 			raw["error"].(map[string]interface{})["reason"],

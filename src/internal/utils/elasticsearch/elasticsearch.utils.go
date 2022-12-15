@@ -6,8 +6,8 @@ import (
 	"fmt"
 )
 
-func AppendDocToBuffer(docId string, docData interface{}, buf *bytes.Buffer) error {
-	meta := []byte(fmt.Sprintf(`{ "index" : { "_id" : "%s" } }%s`, docId, "\n"))
+func AppendDocToBuffer(indexName string, docId string, docData interface{}, buf *bytes.Buffer) error {
+	meta := []byte(fmt.Sprintf(`{ "index" : { "_index": "%s", "_id" : "%s" } }%s`, indexName, docId, "\n"))
 	data, err := json.Marshal(docData)
 	if err != nil {
 		return err

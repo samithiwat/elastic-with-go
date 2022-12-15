@@ -3,6 +3,7 @@ package course
 import (
 	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
+	"github.com/samithiwat/elastic-with-go/_example_apps/utils"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/class"
 	common "github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/common"
@@ -34,20 +35,20 @@ func CreateCourse(isIncludedID bool) *course.Course {
 		AbbrName:        faker.Word(),
 		Faculty:         faker.Word(),
 		Department:      faker.Word(),
-		Credit:          uint(rand.Intn(5)) + 1,
+		Credit:          float32(rand.Intn(5)) + 1,
 		CreditHour:      uint(rand.Intn(5)) + 1,
 		CourseCondition: faker.Sentence(),
 		GenEdType:       common.GenEdType(faker.Word()),
 		Rating:          faker.Word(),
 		Midterm: common.ExamPeriod{
-			Date: faker.Word(),
+			Date: utils.StringAdr(faker.Word()),
 			Period: common.Period{
 				Start: faker.Word(),
 				End:   faker.Word(),
 			},
 		},
 		Final: common.ExamPeriod{
-			Date: faker.Word(),
+			Date: utils.StringAdr(faker.Word()),
 			Period: common.Period{
 				Start: faker.Word(),
 				End:   faker.Word(),

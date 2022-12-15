@@ -16,14 +16,13 @@ This project is the POC for [CU Get Reg](https://cugetreg.com) and [CU Newbie](h
   - [x] CQRS
 - Search
   - [x] Search with basic query string
-  - [ ] Advance search with query string (specific fields)
+  - [x] Advance search with query string (specific fields)
   - [ ] Pagination
 
 ## Stacks
 - golang
 - gRPC
 - elasticsearch
-- redis
 - rabbitmq
 
 ## Getting Start

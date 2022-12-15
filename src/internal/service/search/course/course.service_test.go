@@ -3,10 +3,7 @@ package course
 import (
 	"context"
 	"github.com/go-faker/faker/v4"
-	"github.com/go-redis/redis/v8"
-	"github.com/pkg/errors"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
-	cacheMock "github.com/samithiwat/elastic-with-go/src/mock/cache"
 	courseMock "github.com/samithiwat/elastic-with-go/src/mock/course"
 	courseSearchMock "github.com/samithiwat/elastic-with-go/src/mock/search/course"
 	"github.com/samithiwat/elastic-with-go/src/pb"
@@ -44,93 +41,58 @@ func (t *CourseSearchServiceTest) SetupTest() {
 	}
 }
 
-func (t *CourseSearchServiceTest) TestSearchCachedSuccessfully() {
-	queryString := faker.Word()
+func (t *CourseSearchServiceTest) TestSearchSuccess() {
+	query := faker.Word()
 
 	want := &pb.SearchResponse{Course: t.CourseDtoList}
 
-	courseSearchRepo := courseSearchMock.RepositoryMock{}
-
-	var emptyCourseDtoList []*pb.Course
-
-	cacheRepo := cacheMock.RepositoryMock{}
-	cacheRepo.On("GetCache", queryString, &emptyCourseDtoList).Return(&t.CourseDtoList, nil)
-
-	courseSearchSrv := NewService(&courseSearchRepo, &cacheRepo, t.CacheTTL)
-
-	actual, err := courseSearchSrv.Search(context.Background(), &pb.SearchRequest{
-		QueryString: queryString,
-	})
-
-	assert.Nil(t.T(), err)
-	assert.Equal(t.T(), want, actual)
-}
-
-func (t *CourseSearchServiceTest) TestSearchNotCachedSuccessfully() {
-	queryString := faker.Word()
-
-	want := &pb.SearchResponse{Course: t.CourseDtoList}
-
-	var emptyCourseDtoList []*pb.Course
 	var emptyCourseList []*course.Course
 
 	courseSearchRepo := courseSearchMock.RepositoryMock{}
-	courseSearchRepo.On("Search", queryString, &emptyCourseList).Return(&t.CourseList, nil)
+	courseSearchRepo.On("Search", &pb.SearchRequest{Keyword: query}, &emptyCourseList).Return(&t.CourseList, nil)
 
-	cacheRepo := cacheMock.RepositoryMock{
-		V: map[string]interface{}{},
-	}
-	cacheRepo.On("GetCache", queryString, &emptyCourseDtoList).Return(nil, redis.Nil)
-	cacheRepo.On("SaveCache", queryString, &t.CourseDtoList, t.CacheTTL).Return(nil)
-
-	courseSearchSrv := NewService(&courseSearchRepo, &cacheRepo, t.CacheTTL)
+	courseSearchSrv := NewService(&courseSearchRepo, t.CacheTTL)
 
 	actual, err := courseSearchSrv.Search(context.Background(), &pb.SearchRequest{
-		QueryString: queryString,
+		Keyword: query,
 	})
 
 	assert.Nil(t.T(), err)
 	assert.Equal(t.T(), want, actual)
 }
 
-func (t *CourseSearchServiceTest) TestSearchCachedConnectionError() {
-	queryString := faker.Word()
+func (t *CourseSearchServiceTest) TestSearchWithFilterSuccess() {
+	query := faker.Word()
 
-	var emptyCourseDtoList []*pb.Course
+	want := &pb.SearchResponse{Course: t.CourseDtoList}
+
+	var emptyCourseList []*course.Course
 
 	courseSearchRepo := courseSearchMock.RepositoryMock{}
+	courseSearchRepo.On("Search", &pb.SearchRequest{Keyword: query}, &emptyCourseList).Return(&t.CourseList, nil)
 
-	cacheRepo := cacheMock.RepositoryMock{}
-	cacheRepo.On("GetCache", queryString, &emptyCourseDtoList).Return(nil, errors.New("Connection Error"))
-
-	courseSearchSrv := NewService(&courseSearchRepo, &cacheRepo, t.CacheTTL)
+	courseSearchSrv := NewService(&courseSearchRepo, t.CacheTTL)
 
 	actual, err := courseSearchSrv.Search(context.Background(), &pb.SearchRequest{
-		QueryString: queryString,
+		Keyword: query,
 	})
 
-	st, ok := status.FromError(err)
-	assert.True(t.T(), ok)
-	assert.Nil(t.T(), actual)
-	assert.Equal(t.T(), codes.Unavailable, st.Code())
+	assert.Nil(t.T(), err)
+	assert.Equal(t.T(), want, actual)
 }
 
 func (t *CourseSearchServiceTest) TestSearchElasticsearchConnectionError() {
-	queryString := faker.Word()
+	query := faker.Word()
 
-	var emptyCourseDtoList []*pb.Course
 	var emptyCourseList []*course.Course
 
 	courseSearchRepo := courseSearchMock.RepositoryMock{}
-	courseSearchRepo.On("Search", queryString, &emptyCourseList).Return(nil, status.Error(codes.Unavailable, "cannot connect to elasticsearch"))
+	courseSearchRepo.On("Search", &pb.SearchRequest{Keyword: query}, &emptyCourseList).Return(nil, status.Error(codes.Unavailable, "cannot connect to elasticsearch"))
 
-	cacheRepo := cacheMock.RepositoryMock{}
-	cacheRepo.On("GetCache", queryString, &emptyCourseDtoList).Return(nil, redis.Nil)
-
-	courseSearchSrv := NewService(&courseSearchRepo, &cacheRepo, t.CacheTTL)
+	courseSearchSrv := NewService(&courseSearchRepo, t.CacheTTL)
 
 	actual, err := courseSearchSrv.Search(context.Background(), &pb.SearchRequest{
-		QueryString: queryString,
+		Keyword: query,
 	})
 
 	st, ok := status.FromError(err)
@@ -140,21 +102,17 @@ func (t *CourseSearchServiceTest) TestSearchElasticsearchConnectionError() {
 }
 
 func (t *CourseSearchServiceTest) TestSearchElasticsearchDecodeError() {
-	queryString := faker.Word()
+	query := faker.Word()
 
-	var emptyCourseDtoList []*pb.Course
 	var emptyCourseList []*course.Course
 
 	courseSearchRepo := courseSearchMock.RepositoryMock{}
-	courseSearchRepo.On("Search", queryString, &emptyCourseList).Return(nil, status.Error(codes.Internal, "cannot decode to struct"))
+	courseSearchRepo.On("Search", &pb.SearchRequest{Keyword: query}, &emptyCourseList).Return(nil, status.Error(codes.Internal, "cannot decode to struct"))
 
-	cacheRepo := cacheMock.RepositoryMock{}
-	cacheRepo.On("GetCache", queryString, &emptyCourseDtoList).Return(nil, redis.Nil)
-
-	courseSearchSrv := NewService(&courseSearchRepo, &cacheRepo, t.CacheTTL)
+	courseSearchSrv := NewService(&courseSearchRepo, t.CacheTTL)
 
 	actual, err := courseSearchSrv.Search(context.Background(), &pb.SearchRequest{
-		QueryString: queryString,
+		Keyword: query,
 	})
 
 	st, ok := status.FromError(err)

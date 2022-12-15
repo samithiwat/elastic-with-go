@@ -8,6 +8,7 @@ type CourseDoc struct {
 	CourseDescTh string  `json:"courseDescTh"`
 	CourseDescEn string  `json:"courseDescEn"`
 	GenEdType    string  `json:"genEdType"`
+	StudyProgram string  `json:"studyProgram"`
 	Semester     string  `json:"semester"`
 	AcademicYear string  `json:"academicYear"`
 	RawData      *Course `json:"rawData"`
