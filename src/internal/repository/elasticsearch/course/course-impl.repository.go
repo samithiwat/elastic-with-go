@@ -25,7 +25,7 @@ func NewRepository(esRepo esRepo.Repository) Repository {
 	return &repository{esRepo: esRepo}
 }
 
-func (r repository) Search(in *pb.SearchRequest, result *[]*course.Course) error {
+func (r *repository) Search(in *pb.SearchRequest, result *[]*course.Course) error {
 	queryResultMap := map[string]interface{}{}
 
 	req := search.Request{
@@ -35,7 +35,7 @@ func (r repository) Search(in *pb.SearchRequest, result *[]*course.Course) error
 					{
 						MultiMatch: &types.MultiMatchQuery{
 							Query:  in.Keyword,
-							Fields: []string{"abbrName", "courseNo", "courseNameEn", "courseDescEn", "courseNameTh", "courseDescTh"},
+							Fields: []string{"abbrName^5", "courseNo^5", "courseNameEn^3", "courseDescEn", "courseNameTh^3", "courseDescTh"},
 						},
 					},
 					{
@@ -80,8 +80,13 @@ func (r repository) Search(in *pb.SearchRequest, result *[]*course.Course) error
 															},
 														},
 														{
-															QueryString: &types.QueryStringQuery{
-																Query: fmt.Sprintf("rawData.sections.classes.period.start:[%s TO %s] AND rawData.sections.classes.period.end:[* TO %s]", in.PeriodRange.Start, in.PeriodRange.End, in.PeriodRange.End),
+															Nested: &types.NestedQuery{
+																Path: "rawData.sections.classes.period",
+																Query: &types.Query{
+																	QueryString: &types.QueryStringQuery{
+																		Query: fmt.Sprintf("rawData.sections.classes.period.start:[%s TO %s] AND rawData.sections.classes.period.end:[* TO %s]", in.PeriodRange.Start, in.PeriodRange.End, in.PeriodRange.End),
+																	},
+																},
 															},
 														},
 													},
@@ -115,11 +120,11 @@ func (r repository) Search(in *pb.SearchRequest, result *[]*course.Course) error
 	return nil
 }
 
-func (r repository) Insert(docID string, course *course.Course) error {
+func (r *repository) Insert(docID string, course *course.Course) error {
 	return r.esRepo.Insert(elasticsearchConstant.CourseIndexName, docID, course)
 }
 
-func (r repository) BulkInsert(courseList *[]*course.Course) error {
+func (r *repository) BulkInsert(courseList *[]*course.Course) error {
 	var (
 		nDocList     = len(*courseList)
 		buf          = bytes.Buffer{}
