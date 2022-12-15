@@ -40,13 +40,13 @@
                     "type": "keyword"
                   },
                   "period": {
-                    "type": "object",
+                    "type": "nested",
                     "properties": {
                       "start":{
-                        "type": "text"
+                        "type": "keyword"
                       },
                       "end":{
-                        "type": "text"
+                        "type": "keyword"
                       }
                     }
                   }
