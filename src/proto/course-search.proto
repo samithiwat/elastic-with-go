@@ -72,14 +72,18 @@ message CoursePagination{
 
 // Search
 
+message Filter{
+  repeated string GenEdType = 1;
+  repeated string DayOfWeek = 2;
+  Period PeriodRange = 3;
+  string StudyProgram = 4;
+  string Semester = 5;
+  string AcademicYear = 6;
+}
+
 message SearchRequest{
   string Keyword = 1;
-  repeated string GenEdType = 2;
-  repeated string DayOfWeek = 3;
-  Period PeriodRange = 4;
-  string StudyProgram = 5;
-  string Semester = 6;
-  string AcademicYear = 7;
+  Filter Filter = 2;
   common.PaginationQuery PaginationQuery = 8;
 }
 
