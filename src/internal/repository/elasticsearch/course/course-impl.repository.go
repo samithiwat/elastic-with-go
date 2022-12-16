@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	elasticsearchConstant "github.com/samithiwat/elastic-with-go/src/common/constant/elasticsearch"
 	courseDto "github.com/samithiwat/elastic-with-go/src/internal/domain/dto/course"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	esRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
 	elasticsearchUtils "github.com/samithiwat/elastic-with-go/src/internal/utils/elasticsearch"
@@ -25,7 +26,7 @@ func NewRepository(esRepo esRepo.Repository) Repository {
 	return &repository{esRepo: esRepo}
 }
 
-func (r *repository) Search(in *pb.SearchRequest, result *[]*course.Course) error {
+func (r *repository) Search(in *pb.SearchRequest, result *[]*course.Course, meta *entity.PaginationMetadata) error {
 	queryResultMap := map[string]interface{}{}
 
 	req := search.Request{
@@ -103,7 +104,7 @@ func (r *repository) Search(in *pb.SearchRequest, result *[]*course.Course) erro
 		},
 	}
 
-	if err := r.esRepo.Search(elasticsearchConstant.CourseIndexName, &req, &queryResultMap); err != nil {
+	if err := r.esRepo.Search(elasticsearchConstant.CourseIndexName, &req, &queryResultMap, meta); err != nil {
 		return status.Error(codes.Unavailable, err.Error())
 	}
 

@@ -9,6 +9,8 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity"
+	"github.com/samithiwat/elastic-with-go/src/internal/utils"
 	"time"
 )
 
@@ -24,9 +26,12 @@ func NewRepository(esTypedClient *elasticsearch.TypedClient, esDefaultClient *el
 	}
 }
 
-func (r repository) Search(indexName string, req *search.Request, result *map[string]interface{}) error {
+func (r repository) Search(indexName string, req *search.Request, result *map[string]interface{}, meta *entity.PaginationMetadata) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	req.From = utils.IntAdr(meta.GetOffset())
+	req.Size = utils.IntAdr(meta.GetItemPerPage())
 
 	res, err := r.esTypedClient.Search().Index(indexName).Request(req).Do(ctx)
 
@@ -38,12 +43,17 @@ func (r repository) Search(indexName string, req *search.Request, result *map[st
 		// TODO add log error
 		return errors.New("Invalid query")
 	}
-
 	defer res.Body.Close()
 
 	if err := json.NewDecoder(res.Body).Decode(result); err != nil {
 		return err
 	}
+
+	totalItem := (*result)["hits"].(map[string]interface{})["total"].(map[string]interface{})
+
+	meta.ItemCount = len(totalItem["hits"].(map[string]interface{}))
+	meta.TotalItem = totalItem["value"].(int)
+	meta.TotalPage = totalItem["value"].(int) / meta.ItemsPerPage
 
 	return nil
 }
