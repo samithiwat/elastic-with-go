@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "common.proto";
+
 package course_search;
 
 option go_package = "src/pb;pb";
@@ -63,6 +65,11 @@ message Period{
   string End = 2;
 }
 
+message CoursePagination{
+  repeated Course items = 1;
+  common.PaginationMetadata meta = 2;
+}
+
 // Search
 
 message SearchRequest{
@@ -73,10 +80,9 @@ message SearchRequest{
   string StudyProgram = 5;
   string Semester = 6;
   string AcademicYear = 7;
-  uint32 Limit = 8;
-  uint32 Offset = 9;
+  common.PaginationQuery PaginationQuery = 8;
 }
 
 message SearchResponse{
-  repeated Course Course = 1;
+  CoursePagination Pagination = 1;
 }
