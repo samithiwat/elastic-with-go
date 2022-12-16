@@ -16,6 +16,10 @@ func StringAdr(in string) *string {
 	return &in
 }
 
+func IntAdr(in int) *int {
+	return &in
+}
+
 func UUIDAdr(in uuid.UUID) *uuid.UUID {
 	return &in
 }
