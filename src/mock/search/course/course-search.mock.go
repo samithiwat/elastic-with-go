@@ -1,8 +1,9 @@
 package course
 
 import (
+	courseDto "github.com/samithiwat/elastic-with-go/src/internal/domain/dto/course"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
-	"github.com/samithiwat/elastic-with-go/src/pb"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -20,12 +21,16 @@ func (r *RepositoryMock) BulkInsert(i *[]*course.Course) error {
 	panic("implement me")
 }
 
-func (r *RepositoryMock) Search(in *pb.SearchRequest, result *[]*course.Course) error {
-	args := r.Called(in, result)
+func (r *RepositoryMock) Search(filter *courseDto.Filter, result *[]*course.Course, meta *entity.PaginationMetadata) error {
+	args := r.Called(filter, result, meta)
 
 	if args.Get(0) != nil {
 		*result = *args.Get(0).(*[]*course.Course)
 	}
 
-	return args.Error(1)
+	if args.Get(1) != nil {
+		*meta = *args.Get(1).(*entity.PaginationMetadata)
+	}
+
+	return args.Error(2)
 }

@@ -9,10 +9,10 @@ import (
 	"github.com/rs/zerolog/log"
 	elasticsearchConstant "github.com/samithiwat/elastic-with-go/src/common/constant/elasticsearch"
 	courseDto "github.com/samithiwat/elastic-with-go/src/internal/domain/dto/course"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	esRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
 	elasticsearchUtils "github.com/samithiwat/elastic-with-go/src/internal/utils/elasticsearch"
-	"github.com/samithiwat/elastic-with-go/src/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -25,7 +25,7 @@ func NewRepository(esRepo esRepo.Repository) Repository {
 	return &repository{esRepo: esRepo}
 }
 
-func (r *repository) Search(in *pb.SearchRequest, result *[]*course.Course) error {
+func (r *repository) Search(filter *courseDto.Filter, result *[]*course.Course, meta *entity.PaginationMetadata) error {
 	queryResultMap := map[string]interface{}{}
 
 	req := search.Request{
@@ -34,29 +34,29 @@ func (r *repository) Search(in *pb.SearchRequest, result *[]*course.Course) erro
 				Must: []types.Query{
 					{
 						MultiMatch: &types.MultiMatchQuery{
-							Query:  in.Keyword,
+							Query:  filter.Keyword,
 							Fields: []string{"abbrName^5", "courseNo^5", "courseNameEn^3", "courseDescEn", "courseNameTh^3", "courseDescTh"},
 						},
 					},
 					{
 						Term: map[string]types.TermQuery{
-							"semester": {Value: in.Semester},
+							"semester": {Value: filter.Semester},
 						},
 					},
 					{
 						Term: map[string]types.TermQuery{
-							"studyProgram": {Value: in.StudyProgram},
+							"studyProgram": {Value: filter.StudyProgram},
 						},
 					},
 					{
 						Term: map[string]types.TermQuery{
-							"academicYear": {Value: in.AcademicYear},
+							"academicYear": {Value: filter.AcademicYear},
 						},
 					},
 					{
 						Terms: &types.TermsQuery{
 							TermsQuery: map[string]types.TermsQueryField{
-								"genEdType": in.GenEdType,
+								"genEdType": filter.GenEdTypes,
 							},
 						},
 					},
@@ -75,7 +75,7 @@ func (r *repository) Search(in *pb.SearchRequest, result *[]*course.Course) erro
 														{
 															Terms: &types.TermsQuery{
 																TermsQuery: map[string]types.TermsQueryField{
-																	"rawData.sections.classes.dayOfWeek": in.DayOfWeek,
+																	"rawData.sections.classes.dayOfWeek": filter.DayOfWeeks,
 																},
 															},
 														},
@@ -84,7 +84,7 @@ func (r *repository) Search(in *pb.SearchRequest, result *[]*course.Course) erro
 																Path: "rawData.sections.classes.period",
 																Query: &types.Query{
 																	QueryString: &types.QueryStringQuery{
-																		Query: fmt.Sprintf("rawData.sections.classes.period.start:[%s TO %s] AND rawData.sections.classes.period.end:[* TO %s]", in.PeriodRange.Start, in.PeriodRange.End, in.PeriodRange.End),
+																		Query: fmt.Sprintf("rawData.sections.classes.period.start:[%s TO %s] AND rawData.sections.classes.period.end:[* TO %s]", filter.PeriodRange.Start, filter.PeriodRange.End, filter.PeriodRange.End),
 																	},
 																},
 															},
@@ -103,7 +103,7 @@ func (r *repository) Search(in *pb.SearchRequest, result *[]*course.Course) erro
 		},
 	}
 
-	if err := r.esRepo.Search(elasticsearchConstant.CourseIndexName, &req, &queryResultMap); err != nil {
+	if err := r.esRepo.Search(elasticsearchConstant.CourseIndexName, &req, &queryResultMap, meta); err != nil {
 		return status.Error(codes.Unavailable, err.Error())
 	}
 

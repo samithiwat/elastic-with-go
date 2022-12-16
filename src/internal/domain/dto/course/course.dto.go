@@ -2,8 +2,19 @@ package course
 
 import (
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/dto"
+	commonChulaCourse "github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/common"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 )
+
+type Filter struct {
+	Keyword      string
+	GenEdTypes   []string
+	DayOfWeeks   []string
+	PeriodRange  *commonChulaCourse.Period
+	StudyProgram string
+	Semester     string
+	AcademicYear string
+}
 
 type QueryResult struct {
 	*dto.QueryResult

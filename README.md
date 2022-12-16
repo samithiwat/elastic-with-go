@@ -17,7 +17,7 @@ This project is the POC for [CU Get Reg](https://cugetreg.com) and [CU Newbie](h
 - Search
   - [x] Search with basic query string
   - [x] Advance search with query string (specific fields)
-  - [ ] Pagination
+  - [x] Pagination
 
 ## Stacks
 - golang
