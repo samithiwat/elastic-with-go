@@ -3,6 +3,7 @@ package course
 import (
 	"context"
 	"github.com/rs/zerolog/log"
+	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	courseRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch/course"
 	"github.com/samithiwat/elastic-with-go/src/pb"
@@ -25,8 +26,12 @@ func (s *service) Search(_ context.Context, req *pb.SearchRequest) (*pb.SearchRe
 		result      []*pb.Course
 		queryResult []*course.Course
 	)
+	meta := &entity.PaginationMetadata{
+		ItemsPerPage: int(req.PaginationQuery.Limit),
+		CurrentPage:  int(req.PaginationQuery.Page),
+	}
 
-	if err := s.courseRepo.Search(req, &queryResult); err != nil {
+	if err := s.courseRepo.Search(req, &queryResult, meta); err != nil {
 		log.Error().
 			Err(err).
 			Str("service", "course_search").
@@ -40,5 +45,8 @@ func (s *service) Search(_ context.Context, req *pb.SearchRequest) (*pb.SearchRe
 		result = append(result, c.ToProto())
 	}
 
-	return &pb.SearchResponse{Course: result}, nil
+	return &pb.SearchResponse{Pagination: &pb.CoursePagination{
+		Items: result,
+		Meta:  meta.ToProto(),
+	}}, nil
 }
