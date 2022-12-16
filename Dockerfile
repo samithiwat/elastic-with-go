@@ -19,7 +19,7 @@ RUN GRPC_HEALTH_PROBE_VERSION=v0.3.1 && \
 COPY ./src ./src
 
 # Build the application
-RUN go build -o server ./src/.
+RUN go build -o server ./src/cmd/main.go
 
 # Copy config files
 COPY ./config ./config
