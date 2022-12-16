@@ -49,11 +49,7 @@ func (r repository) Search(indexName string, req *search.Request, result *map[st
 		return err
 	}
 
-	totalItem := (*result)["hits"].(map[string]interface{})["total"].(map[string]interface{})
-
-	meta.ItemCount = len(totalItem["hits"].(map[string]interface{}))
-	meta.TotalItem = totalItem["value"].(int)
-	meta.TotalPage = totalItem["value"].(int) / meta.ItemsPerPage
+	calMetadata(meta, result)
 
 	return nil
 }
@@ -90,4 +86,18 @@ func (r repository) InsertBulk(indexName string, buf *bytes.Buffer) error {
 	}
 
 	return nil
+}
+
+func calMetadata(meta *entity.PaginationMetadata, result *map[string]interface{}) {
+	hits := (*result)["hits"].(map[string]interface{})
+	totalItemValue := int(hits["total"].(map[string]interface{})["value"].(float64))
+
+	meta.TotalItem = totalItemValue
+	meta.TotalPage = totalItemValue / meta.ItemsPerPage
+	meta.ItemCount = len(hits["hits"].([]interface{}))
+
+	// Add total item by 1 if cannot divisible by 10
+	if totalItemValue%10 != 0 {
+		meta.TotalPage++
+	}
 }
