@@ -48,5 +48,9 @@ func CalYearFromID(sid string) (string, error) {
 		return "", errors.New("Invalid student ID")
 	}
 
+	if time.Now().YearDay() < 213 {
+		studYear = studYear - 1
+	}
+
 	return strconv.Itoa(studYear), nil
 }

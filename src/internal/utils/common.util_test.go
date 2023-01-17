@@ -3,7 +3,9 @@ package utils
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"strconv"
 	"testing"
+	"time"
 )
 
 type UtilTest struct {
@@ -15,10 +17,12 @@ func TestUtil(t *testing.T) {
 }
 
 func (t *UtilTest) TestGetStudyYearSuccess() {
-	testGetStudyYearSuccess(t.T(), "62xxxxxxxx", "4")
-	testGetStudyYearSuccess(t.T(), "63xxxxxxxx", "3")
-	testGetStudyYearSuccess(t.T(), "64xxxxxxxx", "2")
-	testGetStudyYearSuccess(t.T(), "65xxxxxxxx", "1")
+	currentYear := time.Now().Year()
+
+	testGetStudyYearSuccess(t.T(), "62xxxxxxxx", strconv.Itoa(currentYear-2019))
+	testGetStudyYearSuccess(t.T(), "63xxxxxxxx", strconv.Itoa(currentYear-2020))
+	testGetStudyYearSuccess(t.T(), "64xxxxxxxx", strconv.Itoa(currentYear-2021))
+	testGetStudyYearSuccess(t.T(), "65xxxxxxxx", strconv.Itoa(currentYear-2022))
 }
 
 func testGetStudyYearSuccess(t *testing.T, sid string, expect string) {
