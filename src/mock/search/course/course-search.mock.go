@@ -34,3 +34,13 @@ func (r *RepositoryMock) Search(filter *courseDto.Filter, result *[]*course.Cour
 
 	return args.Error(2)
 }
+
+func (r *RepositoryMock) Suggest(text string, result *[]string) error {
+	args := r.Called(text, result)
+
+	if args.Get(0) != nil {
+		*result = *args.Get(0).(*[]string)
+	}
+
+	return args.Error(1)
+}
