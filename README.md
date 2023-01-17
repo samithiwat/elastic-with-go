@@ -18,6 +18,8 @@ This project is the POC for [CU Get Reg](https://cugetreg.com) and [CU Newbie](h
   - [x] Search with basic query string
   - [x] Advance search with query string (specific fields)
   - [x] Pagination
+- Suggestion
+  - [x] Suggestion with input word
 
 ## Stacks
 - golang
