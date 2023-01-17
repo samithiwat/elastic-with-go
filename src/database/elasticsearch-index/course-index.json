@@ -42,10 +42,10 @@
                   "period": {
                     "type": "nested",
                     "properties": {
-                      "start":{
+                      "start": {
                         "type": "keyword"
                       },
-                      "end":{
+                      "end": {
                         "type": "keyword"
                       }
                     }
