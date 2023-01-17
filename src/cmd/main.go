@@ -6,7 +6,7 @@ import (
 	courseConstant "github.com/samithiwat/elastic-with-go/src/common/constant/course"
 	searchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
 	courseSearchRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch/course"
-	courseSrv "github.com/samithiwat/elastic-with-go/src/internal/service/search/course"
+	courseSearchSrv "github.com/samithiwat/elastic-with-go/src/internal/service/search/course"
 	subscriberCommon "github.com/samithiwat/elastic-with-go/src/internal/subscriber/common"
 	courseSubscriberHandler "github.com/samithiwat/elastic-with-go/src/internal/subscriber/handler/course"
 	"github.com/samithiwat/elastic-with-go/src/pb"
@@ -144,7 +144,7 @@ func main() {
 
 	courseRepo := courseSearchRepo.NewRepository(esRepo)
 
-	courseService := courseSrv.NewService(courseRepo, conf.App.CacheTTL)
+	courseSearchService := courseSearchSrv.NewService(courseRepo)
 
 	grpcServer := grpc.NewServer(grpc.MaxRecvMsgSize(conf.App.MaxFileSize * 1024 * 1024))
 
@@ -152,7 +152,7 @@ func main() {
 	insertCourseDataSubscriber.RegisterHandler(insertCourseDataHandler.InsertData)
 
 	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
-	pb.RegisterSearchServiceServer(grpcServer, courseService)
+	pb.RegisterSearchServiceServer(grpcServer, courseSearchService)
 	subscriberManagement.Register(insertCourseDataSubscriber)
 
 	reflection.Register(grpcServer)
