@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package course_suggest;
+
+option go_package = "src/pb;pb";
+
+service SuggestService {
+  rpc Suggest(SuggestRequest) returns (SuggestResponse) {}
+}
+
+// Suggest
+
+message SuggestRequest{
+  string Keyword = 1;
+}
+
+message SuggestResponse{
+  repeated string Suggests = 1;
+}

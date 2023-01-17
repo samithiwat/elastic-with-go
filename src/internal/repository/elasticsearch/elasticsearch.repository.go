@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	Search(indexName string, req *search.Request, result *map[string]interface{}, meta *entity.PaginationMetadata) error
+	Suggest(indexName string, req *search.Request, result *map[string]interface{}) error
 	Insert(indexName string, docID string, docData any) error
 	InsertBulk(indexName string, buf *bytes.Buffer) error
 }

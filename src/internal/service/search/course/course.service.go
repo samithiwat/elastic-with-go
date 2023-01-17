@@ -13,13 +13,11 @@ import (
 
 type service struct {
 	courseRepo courseRepo.Repository
-	cacheTTL   int
 }
 
-func NewService(courseRepo courseRepo.Repository, cacheTTL int) pb.SearchServiceServer {
+func NewService(courseRepo courseRepo.Repository) pb.SearchServiceServer {
 	return &service{
 		courseRepo: courseRepo,
-		cacheTTL:   cacheTTL,
 	}
 }
 

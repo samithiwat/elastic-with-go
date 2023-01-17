@@ -58,14 +58,14 @@ func (t *CourseSearchServiceTest) TestSearchSuccess() {
 		Meta:  t.Metadata.ToProto(),
 	}}
 
-	testSearchSuccess(t.T(), want, &t.CourseList, t.CacheTTL, 1, 20)
-	testSearchSuccess(t.T(), want, &t.CourseList, t.CacheTTL, 10, 20)
-	testSearchSuccess(t.T(), want, &t.CourseList, t.CacheTTL, 50, 10)
-	testSearchSuccess(t.T(), want, &t.CourseList, t.CacheTTL, 100, 10)
+	testSearchSuccess(t.T(), want, &t.CourseList, 1, 20)
+	testSearchSuccess(t.T(), want, &t.CourseList, 10, 20)
+	testSearchSuccess(t.T(), want, &t.CourseList, 50, 10)
+	testSearchSuccess(t.T(), want, &t.CourseList, 100, 10)
 
 }
 
-func testSearchSuccess(t *testing.T, want *pb.SearchResponse, courseList *[]*course.Course, cacheTTL int, page int32, limit int32) {
+func testSearchSuccess(t *testing.T, want *pb.SearchResponse, courseList *[]*course.Course, page int32, limit int32) {
 	query := faker.Word()
 	var emptyCourseList []*course.Course
 
@@ -84,7 +84,7 @@ func testSearchSuccess(t *testing.T, want *pb.SearchResponse, courseList *[]*cou
 				TotalPage:    int(want.Pagination.Meta.TotalPage),
 			}, nil)
 
-	courseSearchSrv := NewService(&courseSearchRepo, cacheTTL)
+	courseSearchSrv := NewService(&courseSearchRepo)
 
 	actual, err := courseSearchSrv.Search(context.Background(), &pb.SearchRequest{
 		Keyword: query,
@@ -111,7 +111,7 @@ func (t *CourseSearchServiceTest) TestSearchElasticsearchConnectionError() {
 		}).
 		Return(nil, nil, status.Error(codes.Unavailable, "cannot connect to elasticsearch"))
 
-	courseSearchSrv := NewService(&courseSearchRepo, t.CacheTTL)
+	courseSearchSrv := NewService(&courseSearchRepo)
 
 	actual, err := courseSearchSrv.Search(context.Background(), &pb.SearchRequest{
 		Keyword: query,
@@ -140,7 +140,7 @@ func (t *CourseSearchServiceTest) TestSearchElasticsearchDecodeError() {
 		}).
 		Return(nil, nil, status.Error(codes.Internal, "cannot decode to struct"))
 
-	courseSearchSrv := NewService(&courseSearchRepo, t.CacheTTL)
+	courseSearchSrv := NewService(&courseSearchRepo)
 
 	actual, err := courseSearchSrv.Search(context.Background(), &pb.SearchRequest{
 		Keyword: query,

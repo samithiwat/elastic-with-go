@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/suggestmode"
 	"github.com/mitchellh/mapstructure"
 	"github.com/rs/zerolog/log"
 	elasticsearchConstant "github.com/samithiwat/elastic-with-go/src/common/constant/elasticsearch"
@@ -12,6 +13,7 @@ import (
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity"
 	"github.com/samithiwat/elastic-with-go/src/internal/domain/entity/chula-course/course"
 	esRepo "github.com/samithiwat/elastic-with-go/src/internal/repository/elasticsearch"
+	"github.com/samithiwat/elastic-with-go/src/internal/utils"
 	elasticsearchUtils "github.com/samithiwat/elastic-with-go/src/internal/utils/elasticsearch"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -115,6 +117,47 @@ func (r *repository) Search(filter *courseDto.Filter, result *[]*course.Course, 
 
 	for _, hit := range queryResult.Hits.Hits {
 		*result = append(*result, hit.Source.RawData)
+	}
+
+	return nil
+}
+
+func (r *repository) Suggest(text string, result *[]string) error {
+	suggestResultMap := map[string]interface{}{}
+
+	req := search.Request{
+		Suggest: &types.Suggester{
+			Suggesters: map[string]types.FieldSuggester{
+				"name": {
+					Phrase: &types.PhraseSuggester{
+						Field: "courseNameEn",
+						DirectGenerator: []types.DirectGenerator{
+							{
+								Field:       "courseNameEn",
+								SuggestMode: &suggestmode.Always,
+							},
+						},
+					}},
+				"no": {
+					Term: &types.TermSuggester{
+						Field: "courseNo",
+					}},
+			},
+			Text: utils.StringAdr(text),
+		},
+	}
+
+	if err := r.esRepo.Suggest(elasticsearchConstant.CourseIndexName, &req, &suggestResultMap); err != nil {
+		return status.Error(codes.Internal, err.Error())
+	}
+
+	for _, suggest := range suggestResultMap["suggest"].(map[string]interface{}) {
+		for _, word := range suggest.([]interface{}) {
+			for _, option := range word.(map[string]interface{})["options"].([]interface{}) {
+				*result = append(*result, option.(map[string]interface{})["text"].(string))
+			}
+
+		}
 	}
 
 	return nil
