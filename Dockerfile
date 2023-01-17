@@ -1,5 +1,5 @@
 # Base Image
-FROM golang:1.19.3-alpine3.17 as base
+FROM golang:1.19.4-alpine3.17 as base
 
 # Working directory
 WORKDIR /app
