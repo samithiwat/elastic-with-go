@@ -1,6 +1,7 @@
 proto:
 	protoc --proto_path=src/proto --go_out=. --go-grpc_out=require_unimplemented_servers=false:. common.proto
 	protoc --proto_path=src/proto --go_out=. --go-grpc_out=require_unimplemented_servers=false:. course-search.proto
+	protoc --proto_path=src/proto --go_out=. --go-grpc_out=require_unimplemented_servers=false:. course-suggest.proto
 
 test:
 	go vet ./...
