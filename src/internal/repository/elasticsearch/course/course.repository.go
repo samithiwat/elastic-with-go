@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	Search(filter *courseDto.Filter, result *[]*course.Course, meta *entity.PaginationMetadata) error
+	Suggest(text string, result *[]string) error
 	Insert(indexName string, in *course.Course) error
 	BulkInsert(in *[]*course.Course) error
 }
